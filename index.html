@@ -75,7 +75,7 @@
 
     /* Options */
     .options-panel {
-      background: #e0e0e0; width: 58%;
+      background: #e0e0e0; flex: 1;
       padding: 22px 28px; overflow-y: auto;
     }
     .option-item {
@@ -106,29 +106,11 @@
     .feedback-bar.ok  { display: block; background: #d4edda; color: #155724; }
     .feedback-bar.bad { display: block; background: #f8d7da; color: #721c24; }
 
-    /* Video panel */
-    .video-panel {
-      background: #5a5a5a; flex: 1;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-    }
-    .play-btn {
-      width: 68px; height: 68px; background: rgba(255,255,255,.25);
-      border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    }
-    .play-btn::after {
-      content: ''; width: 0; height: 0;
-      border-top: 15px solid transparent;
-      border-bottom: 15px solid transparent;
-      border-left: 24px solid white; margin-left: 6px;
-    }
-    .video-note { color: rgba(255,255,255,.45); font-size: 0.75rem; margin-top: 13px; text-align: center; }
-
     /* Nav panel */
     .nav-panel {
-      position: absolute; right: 14px; bottom: 20px;
-      width: 178px; background: #1a1a1a;
-      border-radius: 5px; padding: 14px 14px 12px;
+      position: absolute; right: 14px; bottom: 14px;
+      width: 130px; background: #1a1a1a;
+      border-radius: 5px; padding: 12px 12px 10px;
       display: flex; flex-direction: column; align-items: center;
       z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,.5);
     }
@@ -149,18 +131,23 @@
     .validate-btn {
       background: #2a2a2a; color: white; border: 1px solid #555;
       width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
-      font-size: 1.15rem; margin-bottom: 8px;
+      font-size: 1.15rem; margin-bottom: 0;
       display: flex; align-items: center; justify-content: center;
     }
     .validate-btn:hover { background: #3a3a3a; }
     .validate-btn:disabled { opacity: .35; cursor: default; }
 
-    .nav-btns { display: flex; gap: 5px; width: 100%; }
+    /* Footer nav */
+    .q-nav-footer {
+      height: 54px; background: #2a2a2a; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px;
+    }
     .btn-nav {
-      flex: 1; background: #111; color: white;
-      border: 1px solid #444; padding: 7px 4px;
-      font-size: 0.7rem; cursor: pointer; border-radius: 3px;
-      font-weight: bold; letter-spacing: .4px;
+      background: #111; color: white;
+      border: 1px solid #444; padding: 9px 24px;
+      font-size: 0.8rem; cursor: pointer; border-radius: 3px;
+      font-weight: bold; letter-spacing: .5px; min-width: 130px; text-align: center;
     }
     .btn-nav:hover { background: #222; }
     .btn-nav:disabled { opacity: .3; cursor: default; }
@@ -246,11 +233,6 @@
   <div class="content-area">
     <div class="options-panel" id="options-panel"></div>
 
-    <div class="video-panel">
-      <div class="play-btn"></div>
-      <div class="video-note">Vídeo no disponible<br>en mode simulació</div>
-    </div>
-
     <div class="nav-panel">
       <div class="circ-wrap">
         <svg width="78" height="78" viewBox="0 0 78 78">
@@ -262,11 +244,12 @@
       </div>
       <div class="pregunta-lbl" id="pregunta-lbl">Pregunta 1 / 40</div>
       <button class="validate-btn" id="btn-validate" onclick="validateAnswer()" title="Valida la resposta">✓</button>
-      <div class="nav-btns">
-        <button class="btn-nav" id="btn-prev" onclick="prevQ()" disabled>← ANTERIOR</button>
-        <button class="btn-nav" id="btn-next" onclick="nextQ()">SEGÜENT →</button>
-      </div>
     </div>
+  </div>
+
+  <div class="q-nav-footer">
+    <button class="btn-nav" id="btn-prev" onclick="prevQ()" disabled>← ANTERIOR</button>
+    <button class="btn-nav" id="btn-next" onclick="nextQ()">SEGÜENT →</button>
   </div>
 
   <div class="bottom-bar">
