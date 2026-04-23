@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simulador ACTIC Nivell 1</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #3a3a3a;
+      color: #333;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* ── INTRO ── */
+    #intro-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: #2a2a2a;
+      color: white;
+      text-align: center;
+      padding: 40px;
+    }
+    #intro-screen h1 { font-size: 2.4rem; margin-bottom: 6px; color: #e8a020; }
+    #intro-screen .subtitle { font-size: 1rem; color: #aaa; margin-bottom: 28px; }
+    .info-box {
+      background: #3a3a3a; border-radius: 8px;
+      padding: 22px 36px; margin-bottom: 28px;
+      text-align: left; max-width: 480px; width: 100%;
+    }
+    .info-box h3 { color: #e8a020; margin-bottom: 14px; font-size: 1.05rem; }
+    .info-box p { margin-bottom: 7px; font-size: 0.92rem; }
+    .info-box .lbl { color: #aaa; display: inline-block; width: 175px; }
+    .btn-start {
+      background: #e8a020; color: white; border: none;
+      padding: 14px 48px; font-size: 1.05rem; border-radius: 4px;
+      cursor: pointer; font-weight: bold; letter-spacing: 1px;
+    }
+    .btn-start:hover { background: #cf8f18; }
+
+    /* ── EXAM ── */
+    #exam-screen { display: none; flex-direction: column; height: 100vh; }
+
+    .q-header {
+      background: #2a2a2a; color: white;
+      padding: 10px 18px; border-bottom: 1px solid #555;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .q-header-left { flex: 1; }
+    .area-label {
+      font-size: 0.7rem; color: #e8a020;
+      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;
+    }
+    .q-header h2 { font-size: 1rem; font-weight: bold; margin-bottom: 2px; }
+    .q-instruction { font-size: 0.8rem; color: #ccc; font-style: italic; }
+
+    .timer-box {
+      background: #1a1a1a; border-radius: 6px;
+      padding: 8px 16px; text-align: center; min-width: 90px;
+    }
+    .timer-box .timer-lbl { font-size: 0.65rem; color: #aaa; text-transform: uppercase; }
+    .timer-box .timer-val { font-size: 1.2rem; font-weight: bold; color: #e8a020; font-variant-numeric: tabular-nums; }
+    .timer-box.urgent .timer-val { color: #e84040; }
+
+    /* ── CONTENT ── */
+    .content-area {
+      display: flex; flex: 1; overflow: hidden; position: relative;
+    }
+
+    /* Options */
+    .options-panel {
+      background: #e0e0e0; width: 58%;
+      padding: 22px 28px; overflow-y: auto;
+    }
+    .option-item {
+      display: flex; align-items: center;
+      padding: 11px 14px; margin-bottom: 9px;
+      background: white; border: 2px solid transparent;
+      border-radius: 3px; cursor: pointer;
+      transition: border-color .15s, background .15s;
+      user-select: none;
+    }
+    .option-item:hover { border-color: #aaa; }
+    .option-item.selected { border-color: #555; background: #f5f5f5; }
+    .option-item.ok  { border-color: #2a8a2a; background: #e6f4e6; }
+    .option-item.bad { border-color: #cc3333; background: #f4e6e6; }
+    .option-item.missed { border-color: #2a8a2a; background: #fff8e1; }
+    .option-item.disabled { cursor: default; }
+
+    .opt-input {
+      width: 17px; height: 17px; margin-right: 11px;
+      flex-shrink: 0; cursor: pointer; pointer-events: none;
+    }
+    .opt-text { font-size: 0.9rem; color: #333; line-height: 1.35; }
+
+    .feedback-bar {
+      margin-top: 14px; padding: 9px 14px;
+      border-radius: 4px; font-size: 0.88rem; display: none;
+    }
+    .feedback-bar.ok  { display: block; background: #d4edda; color: #155724; }
+    .feedback-bar.bad { display: block; background: #f8d7da; color: #721c24; }
+
+    /* Video panel */
+    .video-panel {
+      background: #5a5a5a; flex: 1;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+    }
+    .play-btn {
+      width: 68px; height: 68px; background: rgba(255,255,255,.25);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    }
+    .play-btn::after {
+      content: ''; width: 0; height: 0;
+      border-top: 15px solid transparent;
+      border-bottom: 15px solid transparent;
+      border-left: 24px solid white; margin-left: 6px;
+    }
+    .video-note { color: rgba(255,255,255,.45); font-size: 0.75rem; margin-top: 13px; text-align: center; }
+
+    /* Nav panel */
+    .nav-panel {
+      position: absolute; right: 14px; bottom: 20px;
+      width: 178px; background: #1a1a1a;
+      border-radius: 5px; padding: 14px 14px 12px;
+      display: flex; flex-direction: column; align-items: center;
+      z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,.5);
+    }
+
+    /* Circular progress */
+    .circ-wrap { position: relative; width: 78px; height: 78px; margin-bottom: 8px; }
+    .circ-wrap svg { transform: rotate(-90deg); }
+    .circ-track { fill: none; stroke: #3a3a3a; stroke-width: 8; }
+    .circ-fill  { fill: none; stroke: #e8a020; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset .35s; }
+    .circ-pct {
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.05rem; font-weight: bold; color: white;
+    }
+
+    .pregunta-lbl { color: #999; font-size: 0.75rem; margin-bottom: 10px; text-align: center; }
+
+    .validate-btn {
+      background: #2a2a2a; color: white; border: 1px solid #555;
+      width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
+      font-size: 1.15rem; margin-bottom: 8px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .validate-btn:hover { background: #3a3a3a; }
+    .validate-btn:disabled { opacity: .35; cursor: default; }
+
+    .nav-btns { display: flex; gap: 5px; width: 100%; }
+    .btn-nav {
+      flex: 1; background: #111; color: white;
+      border: 1px solid #444; padding: 7px 4px;
+      font-size: 0.7rem; cursor: pointer; border-radius: 3px;
+      font-weight: bold; letter-spacing: .4px;
+    }
+    .btn-nav:hover { background: #222; }
+    .btn-nav:disabled { opacity: .3; cursor: default; }
+    .btn-nav.finish { background: #e8a020; border-color: #e8a020; }
+    .btn-nav.finish:hover { background: #cf8f18; }
+
+    /* Bottom red bar */
+    .bottom-bar {
+      height: 9px; background: #1a1a1a;
+      position: relative; flex-shrink: 0;
+    }
+    .bottom-fill { height: 100%; background: #cc0000; transition: width .3s; width: 0%; }
+
+    /* ── RESULTS ── */
+    #results-screen {
+      display: none; flex-direction: column; align-items: center;
+      justify-content: flex-start; min-height: 100vh;
+      background: #2a2a2a; color: white;
+      text-align: center; padding: 30px 20px; overflow-y: auto;
+    }
+    .res-title { font-size: 1.7rem; margin-bottom: 4px; color: #e8a020; }
+    .res-score { font-size: 3.8rem; font-weight: bold; margin: 12px 0 6px; }
+    .res-score.pass { color: #4caf50; }
+    .res-score.fail { color: #f44336; }
+    .res-verdict { font-size: 1.3rem; font-weight: bold; margin-bottom: 6px; }
+    .res-verdict.pass { color: #4caf50; }
+    .res-verdict.fail { color: #f44336; }
+    .res-note { font-size: 0.82rem; color: #999; margin-bottom: 20px; }
+    .res-details {
+      background: #3a3a3a; border-radius: 8px;
+      padding: 18px 28px; margin-bottom: 22px;
+      text-align: left; width: 100%; max-width: 560px;
+    }
+    .res-details h3 { color: #e8a020; margin-bottom: 12px; font-size: 0.95rem; }
+    .area-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 0; border-bottom: 1px solid #4a4a4a; font-size: 0.82rem;
+    }
+    .area-row:last-child { border-bottom: none; }
+    .area-name { flex: 1; }
+    .area-pts { color: #ccc; width: 44px; text-align: right; font-size: 0.8rem; }
+    .area-bar-wrap { width: 110px; height: 7px; background: #555; border-radius: 4px; overflow: hidden; }
+    .area-bar { height: 100%; background: #e8a020; border-radius: 4px; }
+
+    .btn-restart {
+      background: #e8a020; color: white; border: none;
+      padding: 12px 38px; font-size: 0.95rem; border-radius: 4px;
+      cursor: pointer; font-weight: bold;
+    }
+    .btn-restart:hover { background: #cf8f18; }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════ INTRO -->
+<div id="intro-screen">
+  <h1>Simulador ACTIC</h1>
+  <p class="subtitle">Certificat de competències en tecnologies de la informació i la comunicació</p>
+  <div class="info-box">
+    <h3>Nivell 1 · Bàsic (Participant)</h3>
+    <p><span class="lbl">Nombre de preguntes:</span> <strong>40</strong></p>
+    <p><span class="lbl">Temps disponible:</span> <strong>75 minuts</strong></p>
+    <p><span class="lbl">Per superar la prova:</span> <strong>70% mínim (28/40 pts)</strong></p>
+    <p><span class="lbl">Tipus de preguntes:</span> <strong>Selecció simple, selecció múltiple i vertader/fals</strong></p>
+  </div>
+  <button class="btn-start" onclick="startExam()">INICIAR LA PROVA</button>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ EXAM -->
+<div id="exam-screen">
+  <div class="q-header">
+    <div class="q-header-left">
+      <div class="area-label" id="area-label"></div>
+      <h2 id="q-text"></h2>
+      <div class="q-instruction" id="q-instr"></div>
+    </div>
+    <div class="timer-box" id="timer-box">
+      <div class="timer-lbl">Temps restant</div>
+      <div class="timer-val" id="timer-val">75:00</div>
+    </div>
+  </div>
+
+  <div class="content-area">
+    <div class="options-panel" id="options-panel"></div>
+
+    <div class="video-panel">
+      <div class="play-btn"></div>
+      <div class="video-note">Vídeo no disponible<br>en mode simulació</div>
+    </div>
+
+    <div class="nav-panel">
+      <div class="circ-wrap">
+        <svg width="78" height="78" viewBox="0 0 78 78">
+          <circle class="circ-track" cx="39" cy="39" r="31"/>
+          <circle class="circ-fill" id="circ-fill" cx="39" cy="39" r="31"
+            stroke-dasharray="194.8" stroke-dashoffset="194.8"/>
+        </svg>
+        <div class="circ-pct" id="circ-pct">0%</div>
+      </div>
+      <div class="pregunta-lbl" id="pregunta-lbl">Pregunta 1 / 40</div>
+      <button class="validate-btn" id="btn-validate" onclick="validateAnswer()" title="Valida la resposta">✓</button>
+      <div class="nav-btns">
+        <button class="btn-nav" id="btn-prev" onclick="prevQ()" disabled>← ANTERIOR</button>
+        <button class="btn-nav" id="btn-next" onclick="nextQ()">SEGÜENT →</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-bar">
+    <div class="bottom-fill" id="bottom-fill"></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════ RESULTS -->
+<div id="results-screen">
+  <h2 class="res-title">Resultat de la prova</h2>
+  <div class="res-score" id="res-score">—</div>
+  <div class="res-verdict" id="res-verdict">—</div>
+  <p class="res-note">Cal un mínim del 70% (28/40 punts) per superar la prova</p>
+  <div class="res-details">
+    <h3>Resultats per àrea de competència</h3>
+    <div id="area-results"></div>
+  </div>
+  <button class="btn-restart" onclick="restartExam()">TORNAR A FER LA PROVA</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// BANC DE PREGUNTES – Nivell 1 Bàsic (40 preguntes)
+// ═══════════════════════════════════════════════════════════════
+const QUESTIONS = [
+  // ── ÀREA 1: Cerca, gestió i anàlisi de la informació ──────────
+  {
+    id:1, area:1, ind:"1.1.1",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"single",
+    q:"Quina de les següents és una funcionalitat bàsica del navegador web?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Crear presentacions multimèdia"},
+      {id:"b", t:"Gestionar adreces d'interès (favorits)"},
+      {id:"c", t:"Editar fulls de càlcul"},
+      {id:"d", t:"Programar aplicacions mòbils"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:2, area:1, ind:"1.1.2",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"single",
+    q:"Quina és la diferència principal entre navegar i cercar a Internet?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"No hi ha cap diferència, és el mateix concepte"},
+      {id:"b", t:"Navegar és accedir directament a adreces web; cercar és trobar informació amb un motor de cerca"},
+      {id:"c", t:"Navegar és descarregar fitxers; cercar és enviar correus electrònics"},
+      {id:"d", t:"Navegar requereix connexió a Internet; cercar no en necessita"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:3, area:1, ind:"1.1.3",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"multiple",
+    q:"Quins paràmetres bàsics pots tenir en compte quan compares resultats d'una cerca a Internet?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"El format del contingut (text, imatge, vídeo...)"},
+      {id:"b", t:"Les paraules clau del contingut"},
+      {id:"c", t:"El color predominant de la pàgina web"},
+      {id:"d", t:"El preu de subscripció de la pàgina"}
+    ],
+    cor:["a","b"]
+  },
+  {
+    id:4, area:1, ind:"1.1.4",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"single",
+    q:"Quina característica és essencial en una font d'informació fiable?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Tenir moltes imatges i vídeos atractius"},
+      {id:"b", t:"Ser actual, fiable i tenir una autoria reconeguda"},
+      {id:"c", t:"Estar disponible totalment gratuïta"},
+      {id:"d", t:"Tenir milers de visites diàries"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:5, area:1, ind:"1.1.5",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"multiple",
+    q:"Quins criteris simples pots fer servir per delimitar una cerca a Internet als teus objectius?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"Cercar per idioma del contingut"},
+      {id:"b", t:"Filtrar per tipus de contingut (imatges, vídeos...)"},
+      {id:"c", t:"Filtrar pel preu de la informació"},
+      {id:"d", t:"Cercar per color de fons de la pàgina"}
+    ],
+    cor:["a","b"]
+  },
+  {
+    id:6, area:1, ind:"1.2.1",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"single",
+    q:"Quina operació bàsica pots fer amb els fitxers del teu ordinador?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Programar aplicacions directament des d'un fitxer de text"},
+      {id:"b", t:"Canviar el nom d'un fitxer o carpeta"},
+      {id:"c", t:"Connectar-te a Internet sense un navegador"},
+      {id:"d", t:"Crear comptes d'usuari nous al sistema operatiu"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:7, area:1, ind:"1.2.2",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"multiple",
+    q:"Quines de les següents són ubicacions habituals per emmagatzemar informació digital?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"El disc dur local de l'ordinador"},
+      {id:"b", t:"Una memòria externa (USB o disc dur extern)"},
+      {id:"c", t:"Un servei al núvol (Google Drive, OneDrive...)"},
+      {id:"d", t:"La pantalla del monitor"}
+    ],
+    cor:["a","b","c"]
+  },
+  {
+    id:8, area:1, ind:"1.2.5",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"single",
+    q:"Quina eina fas servir habitualment per aplegar i classificar dades numèriques amb un objectiu concret?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Un processador de textos (Word, Writer)"},
+      {id:"b", t:"Un full de càlcul (Excel, Calc)"},
+      {id:"c", t:"Un editor d'imatges (Photoshop, GIMP)"},
+      {id:"d", t:"Un reproductor multimèdia (VLC)"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:9, area:1, ind:"1.3.2",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"single",
+    q:"Quina de les següents és una funció de rang habitual en un full de càlcul?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"GIRAR"},
+      {id:"b", t:"SUMA"},
+      {id:"c", t:"CANVIAR"},
+      {id:"d", t:"CONNECTAR"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:10, area:1, ind:"1.3.3",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"multiple",
+    q:"Quines de les següents eines serveixen per representar dades de manera visual?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"Gràfics de barres o de línies"},
+      {id:"b", t:"Diagrames"},
+      {id:"c", t:"Línies del temps"},
+      {id:"d", t:"Fitxers d'àudio"}
+    ],
+    cor:["a","b","c"]
+  },
+
+  // ── ÀREA 2: Comunicació i col·laboració ──────────────────────
+  {
+    id:11, area:2, ind:"2.1.2",
+    areaName:"2. Comunicació i col·laboració",
+    type:"single",
+    q:"Quina de les següents eines de comunicació digital és síncrona (en temps real)?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"El correu electrònic"},
+      {id:"b", t:"Un fòrum de discussió en línia"},
+      {id:"c", t:"La videoconferència en directe"},
+      {id:"d", t:"Un bloc (blog)"}
+    ],
+    cor:["c"]
+  },
+  {
+    id:12, area:2, ind:"2.1.2",
+    areaName:"2. Comunicació i col·laboració",
+    type:"multiple",
+    q:"Quines funcionalitats bàsiques pots configurar en una eina de comunicació digital?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"Les notificacions"},
+      {id:"b", t:"La imatge de perfil"},
+      {id:"c", t:"El microprogramari (firmware) del dispositiu"},
+      {id:"d", t:"Els missatges d'estat"}
+    ],
+    cor:["a","b","d"]
+  },
+  {
+    id:13, area:2, ind:"2.1.3",
+    areaName:"2. Comunicació i col·laboració",
+    type:"truefalse",
+    q:"Quan comparteixo fitxers digitals, he de respectar la normativa de propietat intel·lectual i de protecció de dades personals.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:14, area:2, ind:"2.1.4",
+    areaName:"2. Comunicació i col·laboració",
+    type:"single",
+    q:"Quina de les següents opcions descriu millor una xarxa social digital?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Un programa per editar imatges i vídeos"},
+      {id:"b", t:"Una plataforma digital per participar i compartir continguts amb altres persones"},
+      {id:"c", t:"Un sistema operatiu per a dispositius mòbils"},
+      {id:"d", t:"Un tipus de virus informàtic"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:15, area:2, ind:"2.1.6",
+    areaName:"2. Comunicació i col·laboració",
+    type:"truefalse",
+    q:"A Internet és important compartir només continguts i informació que hem contrastat i verificat prèviament.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:16, area:2, ind:"2.2.1",
+    areaName:"2. Comunicació i col·laboració",
+    type:"single",
+    q:"Quina eina és més adequada per treballar simultàniament amb altres persones en un mateix document?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Un document de text guardat localment al teu ordinador"},
+      {id:"b", t:"Un fitxer enviat per correu electrònic"},
+      {id:"c", t:"Un document compartit al núvol (Google Docs, Microsoft 365...)"},
+      {id:"d", t:"Un document imprès en paper"}
+    ],
+    cor:["c"]
+  },
+  {
+    id:17, area:2, ind:"2.2.2",
+    areaName:"2. Comunicació i col·laboració",
+    type:"truefalse",
+    q:"En un entorn digital de treball col·laboratiu és important seguir les normes d'ús establertes per l'equip.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:18, area:2, ind:"2.3.1",
+    areaName:"2. Comunicació i col·laboració",
+    type:"single",
+    q:"Quin dels següents exemples mostra una participació en la societat digital?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Llegir un diari imprès en paper"},
+      {id:"b", t:"Veure la televisió analògica"},
+      {id:"c", t:"Participar en un fòrum en línia sobre un tema d'interès social"},
+      {id:"d", t:"Escoltar la ràdio convencional sense connexió"}
+    ],
+    cor:["c"]
+  },
+  {
+    id:19, area:2, ind:"2.3.4",
+    areaName:"2. Comunicació i col·laboració",
+    type:"truefalse",
+    q:"Cal mostrar una actitud positiva envers la inclusió digital i ser conscients de les problemàtiques socials que generen les tecnologies.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:20, area:2, ind:"2.1.5",
+    areaName:"2. Comunicació i col·laboració",
+    type:"single",
+    q:"Quina diferència hi ha entre la realitat virtual (RV) i la realitat augmentada (RA)?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"La RV substitueix completament l'entorn real; la RA hi afegeix elements digitals"},
+      {id:"b", t:"La RA substitueix completament l'entorn real; la RV hi afegeix elements digitals"},
+      {id:"c", t:"Totes dues substitueixen completament l'entorn real"},
+      {id:"d", t:"No hi ha cap diferència entre les dues tecnologies"}
+    ],
+    cor:["a"]
+  },
+
+  // ── ÀREA 3: Creació de continguts ────────────────────────────
+  {
+    id:21, area:3, ind:"3.1.1",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"multiple",
+    q:"Quins dels següents són els tipus principals de continguts digitals?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"Text"},
+      {id:"b", t:"Imatge"},
+      {id:"c", t:"Àudio"},
+      {id:"d", t:"Vídeo"}
+    ],
+    cor:["a","b","c","d"]
+  },
+  {
+    id:22, area:3, ind:"3.1.2",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"single",
+    q:"Quina aplicació fas servir habitualment per crear una presentació digital?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Un processador de textos (Word, Writer)"},
+      {id:"b", t:"Un programa de presentacions (PowerPoint, Impress)"},
+      {id:"c", t:"Un full de càlcul (Excel, Calc)"},
+      {id:"d", t:"Un editor de vídeo (Premiere, iMovie)"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:23, area:3, ind:"3.1.3",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"truefalse",
+    q:"Puc crear continguts digitals simples com textos, presentacions, imatges o àudios per expressar-me digitalment.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:24, area:3, ind:"3.1.4",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"multiple",
+    q:"Quines de les següents són funcionalitats bàsiques d'una aplicació per crear continguts digitals?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"El menú Fitxer (per desar i obrir documents)"},
+      {id:"b", t:"El menú Edició (per copiar i enganxar)"},
+      {id:"c", t:"La visualització del document"},
+      {id:"d", t:"La connexió directa a altres ordinadors de la xarxa local"}
+    ],
+    cor:["a","b","c"]
+  },
+  {
+    id:25, area:3, ind:"3.1.5",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"single",
+    q:"Quina eina bàsica fas servir per estructurar jeràrquicament un document digital?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Els encapçalaments (títols, subtítols...)"},
+      {id:"b", t:"El fons de pantalla del sistema operatiu"},
+      {id:"c", t:"La configuració de la connexió Wi-Fi"},
+      {id:"d", t:"La impressora del sistema"}
+    ],
+    cor:["a"]
+  },
+  {
+    id:26, area:3, ind:"3.2.1",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"truefalse",
+    q:"Puc crear dissenys gràfics bàsics combinant continguts digitals de tipus diferent (text, imatge, color...) per expressar-me de manera visual.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:27, area:3, ind:"3.2.2",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"single",
+    q:"On pots trobar imatges, plantilles o àudios per fer servir en els teus continguts digitals?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Als repositoris i bancs de recursos en línia"},
+      {id:"b", t:"Només als ordinadors de la biblioteca municipal"},
+      {id:"c", t:"Únicament als programes de pagament"},
+      {id:"d", t:"Dins del processador de textos, sense necessitat d'Internet"}
+    ],
+    cor:["a"]
+  },
+  {
+    id:28, area:3, ind:"3.4.1",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"multiple",
+    q:"Quins dels següents exemples corresponen a llenguatges o entorns de programació?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"Python"},
+      {id:"b", t:"Scratch (programació per blocs)"},
+      {id:"c", t:"HTML"},
+      {id:"d", t:"Microsoft Word"}
+    ],
+    cor:["a","b","c"]
+  },
+  {
+    id:29, area:3, ind:"3.4.2",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"truefalse",
+    q:"El pensament computacional es basa en el raonament lògic per identificar i resoldre problemes de manera sistemàtica.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:30, area:3, ind:"3.4.4",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"single",
+    q:"Quin dels següents és un exemple de sistema d'intel·ligència artificial?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Una calculadora bàsica de butxaca"},
+      {id:"b", t:"Un assistent de veu com Siri o Alexa"},
+      {id:"c", t:"Un rellotge analògic"},
+      {id:"d", t:"Una impressora convencional"}
+    ],
+    cor:["b"]
+  },
+
+  // ── ÀREA 4: Seguretat, benestar i civisme ────────────────────
+  {
+    id:31, area:4, ind:"4.1.1",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"multiple",
+    q:"Quins dels següents són riscos associats a l'ús de dispositius tecnològics?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"Robatori o pèrdua de dades personals"},
+      {id:"b", t:"Suplantació d'identitat"},
+      {id:"c", t:"Infecció per programari maliciós (virus, ransomware...)"},
+      {id:"d", t:"Augment de la velocitat de processament del dispositiu"}
+    ],
+    cor:["a","b","c"]
+  },
+  {
+    id:32, area:4, ind:"4.1.2",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"multiple",
+    q:"Quines mesures bàsiques de protecció pots aplicar als teus dispositius digitals?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"Usar contrasenyes segures i difícils d'endevinar"},
+      {id:"b", t:"Activar el bloqueig de pantalla"},
+      {id:"c", t:"Connectar-se sempre a xarxes Wi-Fi públiques sense protecció"},
+      {id:"d", t:"Xifrar les comunicacions sensibles"}
+    ],
+    cor:["a","b","d"]
+  },
+  {
+    id:33, area:4, ind:"4.1.3",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"single",
+    q:"Quina mesura et protegeix millor contra el programari maliciós (virus) en el teu dispositiu?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Canviar el color del fons de pantalla regularment"},
+      {id:"b", t:"Instal·lar i mantenir actualitzat un programa antivirus"},
+      {id:"c", t:"Augmentar el volum dels altaveus al màxim"},
+      {id:"d", t:"Desactivar la pantalla del dispositiu quan no s'usa"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:34, area:4, ind:"4.1.4",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"truefalse",
+    q:"És recomanable fer còpies de seguretat dels dispositius i continguts digitals de manera periòdica.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:35, area:4, ind:"4.2.1",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"truefalse",
+    q:"Quan ens registrem en serveis en línia, hem de valorar quines dades personals proporcionem i si és convenient fer-ho.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:36, area:4, ind:"4.2.2",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"single",
+    q:"Com has d'actuar respecte a les condicions d'ús quan t'inscrius en un servei en línia?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Acceptar-les sempre sense llegir-les per estalviar temps"},
+      {id:"b", t:"Llegir-les i acceptar-les o rebutjar-les de manera conscient i informada"},
+      {id:"c", t:"Ignorar-les perquè no tenen cap importància legal"},
+      {id:"d", t:"Demanar sempre a un amic que les accepti en nom teu"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:37, area:4, ind:"4.3.2",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"truefalse",
+    q:"L'ús excessiu de la tecnologia digital pot generar riscos per a la salut, com ara conductes addictives o esgotament digital.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:38, area:4, ind:"4.5.2",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"multiple",
+    q:"Quines de les següents afirmacions sobre la propietat intel·lectual en entorns digitals són correctes?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"He de respectar els drets de propietat intel·lectual dels continguts que faig servir"},
+      {id:"b", t:"Els continguts publicats a Internet es poden usar lliurement per a qualsevol propòsit"},
+      {id:"c", t:"Existeixen llicències lliures (Creative Commons) i llicències privatives"},
+      {id:"d", t:"Totes les imatges trobades a Google es poden usar sense restriccions"}
+    ],
+    cor:["a","c"]
+  },
+
+  // ── ÀREA 5: Autonomia i resolució de problemes ───────────────
+  {
+    id:39, area:5, ind:"5.1.1",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"single",
+    q:"Quina és la diferència principal entre maquinari (hardware) i programari (software)?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"El maquinari és el conjunt de programes; el programari és la part física"},
+      {id:"b", t:"El maquinari és la part física (ordinador, ratolí...); el programari és el conjunt de programes (sistema operatiu, aplicacions...)"},
+      {id:"c", t:"No hi ha cap diferència significativa entre ambdós conceptes"},
+      {id:"d", t:"El maquinari és el sistema operatiu; el programari és el processador"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:40, area:5, ind:"5.1.2",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"multiple",
+    q:"Quins dels següents dispositius es consideren dispositius digitals d'ús comú?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"L'ordinador personal (PC o portàtil)"},
+      {id:"b", t:"El telèfon intel·ligent (smartphone)"},
+      {id:"c", t:"El televisor connectat a Internet (Smart TV)"},
+      {id:"d", t:"El llapis de plom"}
+    ],
+    cor:["a","b","c"]
+  },
+  {
+    id:41, area:5, ind:"5.1.3",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"single",
+    q:"Quina de les següents tasques correspon a les funcions bàsiques del sistema operatiu?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Editar fotografies de manera professional"},
+      {id:"b", t:"Gestionar els comptes d'usuari i organitzar l'escriptori"},
+      {id:"c", t:"Dissenyar pàgines web amb HTML i CSS"},
+      {id:"d", t:"Programar aplicacions mòbils des de zero"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:42, area:5, ind:"5.1.5",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"multiple",
+    q:"Quins dels següents són tipus de connectivitat habituals entre dispositius tecnològics?",
+    instr:"Selecciona les respostes correctes",
+    opts:[
+      {id:"a", t:"Wi-Fi (connexió sense fils)"},
+      {id:"b", t:"Bluetooth"},
+      {id:"c", t:"Cable USB"},
+      {id:"d", t:"Connexió per telepatia"}
+    ],
+    cor:["a","b","c"]
+  },
+  {
+    id:43, area:5, ind:"5.2.2",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"single",
+    q:"Quin dels següents és un exemple de tràmit bàsic que es pot fer en línia?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Comprar productes per Internet"},
+      {id:"b", t:"Llegir un llibre físic en una biblioteca"},
+      {id:"c", t:"Pagar una multa presencialment a l'ajuntament"},
+      {id:"d", t:"Obtenir un certificat mèdic signant en paper a la consulta"}
+    ],
+    cor:["a"]
+  },
+  {
+    id:44, area:5, ind:"5.2.5",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"truefalse",
+    q:"Internet i les plataformes digitals ofereixen oportunitats per aprendre i seguir comunitats relacionades amb els nostres interessos personals i professionals.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  },
+  {
+    id:45, area:5, ind:"5.4.1",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"single",
+    q:"Quina és la primera acció que hauries de fer si el teu ordinador no s'engega correctament?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Formatar el disc dur immediatament per reinstal·lar el sistema"},
+      {id:"b", t:"Comprovar connexions bàsiques (llum, cables) i reiniciar el dispositiu"},
+      {id:"c", t:"Desinstal·lar totes les aplicacions del sistema"},
+      {id:"d", t:"Obrir l'ordinador i canviar el processador directament"}
+    ],
+    cor:["b"]
+  },
+  {
+    id:46, area:5, ind:"5.4.2",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"truefalse",
+    q:"Puc buscar informació i suport a Internet (PMF/FAQ, fòrums, tutorials...) per intentar resoldre problemes tècnics habituals.",
+    instr:"Selecciona Verdader o Fals",
+    opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
+    cor:["true"]
+  }
+];
+
+// Seleccionem 40 preguntes: les 8 primeres de cada àrea (o totes si n'hi ha menys de 8)
+function selectQuestions() {
+  const areas = [1,2,3,4,5];
+  const perArea = 8;
+  let selected = [];
+  areas.forEach(a => {
+    const pool = QUESTIONS.filter(q => q.area === a);
+    selected = selected.concat(pool.slice(0, perArea));
+  });
+  // Barreja aleatòria
+  for (let i = selected.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [selected[i], selected[j]] = [selected[j], selected[i]];
+  }
+  return selected;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// ESTAT GLOBAL
+// ═══════════════════════════════════════════════════════════════
+let questions = [];
+let cur = 0;
+let userAns = [];
+let validated = [];
+let timerSecs = 75 * 60;
+let timerInterval = null;
+
+const CIRC_R = 31;
+const CIRC_C = 2 * Math.PI * CIRC_R; // ~194.8
+
+// ═══════════════════════════════════════════════════════════════
+// TIMER
+// ═══════════════════════════════════════════════════════════════
+function startTimer() {
+  timerInterval = setInterval(() => {
+    timerSecs--;
+    updateTimerDisplay();
+    if (timerSecs <= 0) {
+      clearInterval(timerInterval);
+      finishExam();
+    }
+  }, 1000);
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(timerSecs / 60);
+  const s = timerSecs % 60;
+  const el = document.getElementById('timer-val');
+  el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  document.getElementById('timer-box').className = timerSecs < 300 ? 'timer-box urgent' : 'timer-box';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INICIAR / REINICIAR
+// ═══════════════════════════════════════════════════════════════
+function startExam() {
+  questions = selectQuestions();
+  cur = 0;
+  userAns = questions.map(() => []);
+  validated = questions.map(() => false);
+  timerSecs = 75 * 60;
+  document.getElementById('intro-screen').style.display = 'none';
+  document.getElementById('exam-screen').style.display = 'flex';
+  renderQ(0);
+  startTimer();
+}
+
+function restartExam() {
+  clearInterval(timerInterval);
+  document.getElementById('results-screen').style.display = 'none';
+  document.getElementById('intro-screen').style.display = 'flex';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// RENDER PREGUNTA
+// ═══════════════════════════════════════════════════════════════
+function renderQ(idx) {
+  const q = questions[idx];
+
+  document.getElementById('area-label').textContent = q.areaName + '  ·  Indicador ' + q.ind;
+  document.getElementById('q-text').textContent = q.q;
+  document.getElementById('q-instr').textContent = q.instr;
+
+  const panel = document.getElementById('options-panel');
+  panel.innerHTML = '';
+
+  q.opts.forEach(opt => {
+    const isSelected = userAns[idx].includes(opt.id);
+    const isVal = validated[idx];
+    const isCorrect = q.cor.includes(opt.id);
+    const isChosen = userAns[idx].includes(opt.id);
+
+    const item = document.createElement('div');
+    item.id = 'opt-' + opt.id;
+
+    let cls = 'option-item';
+    if (isVal) {
+      cls += ' disabled';
+      if (isCorrect && isChosen) cls += ' ok';
+      else if (!isCorrect && isChosen) cls += ' bad';
+      else if (isCorrect && !isChosen) cls += ' missed';
+    } else {
+      if (isSelected) cls += ' selected';
+    }
+    item.className = cls;
+
+    if (!isVal) {
+      item.addEventListener('click', () => selectOpt(opt.id, q.type));
+    }
+
+    const inputType = q.type === 'multiple' ? 'checkbox' : 'radio';
+    const input = document.createElement('input');
+    input.type = inputType;
+    input.className = 'opt-input';
+    input.checked = isSelected;
+    input.disabled = isVal;
+
+    const label = document.createElement('label');
+    label.className = 'opt-text';
+    label.textContent = opt.t;
+
+    item.appendChild(input);
+    item.appendChild(label);
+    panel.appendChild(item);
+  });
+
+  // Feedback
+  if (validated[idx]) {
+    const pts = scoreQ(idx);
+    const fb = document.createElement('div');
+    fb.className = 'feedback-bar ' + (pts > 0 ? 'ok' : 'bad');
+    if (pts === 1) {
+      fb.textContent = '✓ Resposta correcta!';
+    } else if (pts > 0) {
+      fb.textContent = '✓ Parcialment correcta (' + Math.round(pts * 100) + '%)';
+    } else {
+      const corText = q.opts.filter(o => q.cor.includes(o.id)).map(o => o.t).join(', ');
+      fb.textContent = '✗ Incorrecta. Resposta correcta: ' + corText;
+    }
+    panel.appendChild(fb);
+  }
+
+  // Nav
+  document.getElementById('pregunta-lbl').textContent = 'Pregunta ' + (idx+1) + ' / ' + questions.length;
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-validate').disabled = validated[idx];
+
+  const btnNext = document.getElementById('btn-next');
+  if (idx === questions.length - 1) {
+    btnNext.textContent = 'FINALITZAR';
+    btnNext.className = 'btn-nav finish';
+    btnNext.onclick = finishExam;
+  } else {
+    btnNext.textContent = 'SEGÜENT →';
+    btnNext.className = 'btn-nav';
+    btnNext.onclick = nextQ;
+  }
+
+  // Cercle de progrés
+  const pct = Math.round((idx / questions.length) * 100);
+  document.getElementById('circ-fill').style.strokeDashoffset = CIRC_C - (pct / 100) * CIRC_C;
+  document.getElementById('circ-pct').textContent = pct + '%';
+
+  // Barra inferior
+  document.getElementById('bottom-fill').style.width = ((idx + 1) / questions.length * 100) + '%';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SELECCIÓ D'OPCIONS
+// ═══════════════════════════════════════════════════════════════
+function selectOpt(optId, type) {
+  if (validated[cur]) return;
+
+  if (type === 'single' || type === 'truefalse') {
+    userAns[cur] = [optId];
+  } else {
+    const i = userAns[cur].indexOf(optId);
+    if (i > -1) userAns[cur].splice(i, 1);
+    else userAns[cur].push(optId);
+  }
+
+  // Actualitza visualment sense re-render complet
+  const q = questions[cur];
+  q.opts.forEach(opt => {
+    const item = document.getElementById('opt-' + opt.id);
+    if (!item) return;
+    const inp = item.querySelector('input');
+    const sel = userAns[cur].includes(opt.id);
+    inp.checked = sel;
+    item.classList.toggle('selected', sel);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VALIDAR
+// ═══════════════════════════════════════════════════════════════
+function validateAnswer() {
+  if (validated[cur] || userAns[cur].length === 0) return;
+  validated[cur] = true;
+  renderQ(cur);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// NAVEGACIÓ
+// ═══════════════════════════════════════════════════════════════
+function nextQ() {
+  if (cur < questions.length - 1) { cur++; renderQ(cur); }
+}
+function prevQ() {
+  if (cur > 0) { cur--; renderQ(cur); }
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PUNTUACIÓ
+// ═══════════════════════════════════════════════════════════════
+function scoreQ(idx) {
+  const q = questions[idx];
+  const ans = userAns[idx];
+  if (ans.length === 0) return 0;
+  if (q.type === 'single' || q.type === 'truefalse') {
+    return ans[0] === q.cor[0] ? 1 : 0;
+  }
+  // Múltiple: (encerts - errors) / total_correctes, mínim 0
+  const hits = ans.filter(a => q.cor.includes(a)).length;
+  const err  = ans.filter(a => !q.cor.includes(a)).length;
+  return Math.max(0, (hits - err) / q.cor.length);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FINALITZAR
+// ═══════════════════════════════════════════════════════════════
+function finishExam() {
+  clearInterval(timerInterval);
+
+  const total = questions.reduce((s, _, i) => s + scoreQ(i), 0);
+  const pct   = Math.round((total / questions.length) * 100);
+  const pass  = total >= questions.length * 0.7;
+
+  document.getElementById('exam-screen').style.display = 'none';
+  const rs = document.getElementById('results-screen');
+  rs.style.display = 'flex';
+
+  document.getElementById('res-score').textContent  = total.toFixed(1) + ' / ' + questions.length;
+  document.getElementById('res-score').className     = 'res-score ' + (pass ? 'pass' : 'fail');
+  document.getElementById('res-verdict').textContent = pass ? '✓ PROVA SUPERADA' : '✗ PROVA NO SUPERADA';
+  document.getElementById('res-verdict').className   = 'res-verdict ' + (pass ? 'pass' : 'fail');
+
+  // Resultats per àrea
+  const areaNames = {
+    1:"1. Cerca, gestió i anàlisi",
+    2:"2. Comunicació i col·laboració",
+    3:"3. Creació de continguts",
+    4:"4. Seguretat i civisme",
+    5:"5. Autonomia i resolució"
+  };
+  const ar = document.getElementById('area-results');
+  ar.innerHTML = '';
+
+  [1,2,3,4,5].forEach(a => {
+    const aqs = questions.map((q,i) => ({q,i})).filter(({q}) => q.area === a);
+    if (!aqs.length) return;
+    const s = aqs.reduce((acc, {i}) => acc + scoreQ(i), 0);
+    const p = Math.round((s / aqs.length) * 100);
+    const row = document.createElement('div');
+    row.className = 'area-row';
+    row.innerHTML = `
+      <span class="area-name">${areaNames[a]}</span>
+      <span class="area-pts">${s.toFixed(1)}/${aqs.length}</span>
+      <div class="area-bar-wrap"><div class="area-bar" style="width:${p}%"></div></div>`;
+    ar.appendChild(row);
+  });
+}
+</script>
+</body>
+</html>
