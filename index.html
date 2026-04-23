@@ -6,203 +6,131 @@
   <title>Simulador ACTIC Nivell 1</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, Helvetica, sans-serif; background: #3a3a3a; color: #333; height: 100vh; overflow: hidden; }
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: #3a3a3a;
-      color: #333;
-      height: 100vh;
-      overflow: hidden;
-    }
-
-    /* ── INTRO ── */
-    #intro-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      background: #2a2a2a;
-      color: white;
-      text-align: center;
-      padding: 40px;
-    }
-    #intro-screen h1 { font-size: 2.4rem; margin-bottom: 6px; color: #e8a020; }
-    #intro-screen .subtitle { font-size: 1rem; color: #aaa; margin-bottom: 28px; }
-    .info-box {
-      background: #3a3a3a; border-radius: 8px;
-      padding: 22px 36px; margin-bottom: 28px;
-      text-align: left; max-width: 480px; width: 100%;
-    }
-    .info-box h3 { color: #e8a020; margin-bottom: 14px; font-size: 1.05rem; }
-    .info-box p { margin-bottom: 7px; font-size: 0.92rem; }
-    .info-box .lbl { color: #aaa; display: inline-block; width: 175px; }
-    .btn-start {
-      background: #e8a020; color: white; border: none;
-      padding: 14px 48px; font-size: 1.05rem; border-radius: 4px;
-      cursor: pointer; font-weight: bold; letter-spacing: 1px;
-    }
+    /* INTRO */
+    #intro-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #2a2a2a; color: white; text-align: center; padding: 40px; }
+    #intro-screen h1 { font-size: 2.2rem; margin-bottom: 4px; color: #e8a020; }
+    #intro-screen .subtitle { font-size: 0.95rem; color: #aaa; margin-bottom: 24px; }
+    .info-box { background: #3a3a3a; border-radius: 6px; padding: 20px 32px; margin-bottom: 24px; text-align: left; max-width: 520px; width: 100%; }
+    .info-box h3 { color: #e8a020; margin-bottom: 12px; font-size: 1rem; text-transform: uppercase; letter-spacing: .5px; }
+    .info-box p { margin-bottom: 6px; font-size: 0.88rem; }
+    .info-box .lbl { color: #aaa; display: inline-block; width: 185px; }
+    .btn-start { background: #e8a020; color: white; border: none; padding: 13px 46px; font-size: 1rem; border-radius: 3px; cursor: pointer; font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
     .btn-start:hover { background: #cf8f18; }
 
-    /* ── EXAM ── */
+    /* EXAM */
     #exam-screen { display: none; flex-direction: column; height: 100vh; }
 
-    .q-header {
-      background: #2a2a2a; color: white;
-      padding: 10px 18px; border-bottom: 1px solid #555;
-      display: flex; justify-content: space-between; align-items: center;
-    }
-    .q-header-left { flex: 1; }
-    .area-label {
-      font-size: 0.7rem; color: #e8a020;
-      text-transform: uppercase; letter-spacing: 1px; margin-bottom: 3px;
-    }
-    .q-header h2 { font-size: 1rem; font-weight: bold; margin-bottom: 2px; }
-    .q-instruction { font-size: 0.8rem; color: #ccc; font-style: italic; }
-
-    .timer-box {
-      background: #1a1a1a; border-radius: 6px;
-      padding: 8px 16px; text-align: center; min-width: 90px;
-    }
-    .timer-box .timer-lbl { font-size: 0.65rem; color: #aaa; text-transform: uppercase; }
-    .timer-box .timer-val { font-size: 1.2rem; font-weight: bold; color: #e8a020; font-variant-numeric: tabular-nums; }
+    .q-header { background: #2a2a2a; color: white; padding: 10px 18px 12px; border-bottom: 2px solid #e8a020; display: flex; justify-content: space-between; align-items: flex-start; }
+    .q-header-left { flex: 1; padding-right: 16px; }
+    .area-label { font-size: 0.68rem; color: #e8a020; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 5px; font-weight: bold; }
+    .grade-badge { display: inline-block; font-size: 0.58rem; padding: 1px 7px; border-radius: 10px; margin-left: 8px; text-transform: uppercase; letter-spacing: .5px; font-weight: bold; vertical-align: middle; }
+    .grade-badge.simple  { background: #2a3a2a; color: #7ab87a; border: 1px solid #3a5a3a; }
+    .grade-badge.mitja   { background: #2a3545; color: #7ab0cf; border: 1px solid #3a5570; }
+    .grade-badge.complex { background: #3a2a2a; color: #cf8f7a; border: 1px solid #5a3a3a; }
+    .q-header h2 { font-size: 1.05rem; font-weight: bold; margin-bottom: 4px; line-height: 1.4; }
+    .q-instruction { font-size: 0.78rem; color: #bbb; font-style: italic; }
+    .timer-box { background: #1a1a1a; border-radius: 5px; padding: 7px 15px; text-align: center; min-width: 95px; flex-shrink: 0; }
+    .timer-box .timer-lbl { font-size: 0.6rem; color: #888; text-transform: uppercase; letter-spacing: .5px; }
+    .timer-box .timer-val { font-size: 1.25rem; font-weight: bold; color: #e8a020; font-variant-numeric: tabular-nums; letter-spacing: 1px; }
     .timer-box.urgent .timer-val { color: #e84040; }
 
-    /* ── CONTENT ── */
-    .content-area {
-      display: flex; flex: 1; overflow: hidden; position: relative;
-    }
+    /* CONTENT */
+    .content-area { display: flex; flex: 1; overflow: hidden; position: relative; }
+    .options-panel { background: #d8d8d8; flex: 1; padding: 20px 28px 80px; overflow-y: auto; }
 
-    /* Options */
-    .options-panel {
-      background: #e0e0e0; flex: 1;
-      padding: 22px 28px; overflow-y: auto;
-    }
-    .option-item {
-      display: flex; align-items: center;
-      padding: 11px 14px; margin-bottom: 9px;
-      background: white; border: 2px solid transparent;
-      border-radius: 3px; cursor: pointer;
-      transition: border-color .15s, background .15s;
-      user-select: none;
-    }
-    .option-item:hover { border-color: #aaa; }
-    .option-item.selected { border-color: #555; background: #f5f5f5; }
-    .option-item.ok  { border-color: #2a8a2a; background: #e6f4e6; }
-    .option-item.bad { border-color: #cc3333; background: #f4e6e6; }
-    .option-item.missed { border-color: #2a8a2a; background: #fff8e1; }
+    /* SINGLE / MULTIPLE / TRUEFALSE */
+    .option-item { display: flex; align-items: center; padding: 12px 14px; margin-bottom: 8px; background: white; border: 2px solid #ddd; border-radius: 3px; cursor: pointer; transition: border-color .12s, background .12s; user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,.06); }
+    .option-item:hover { border-color: #aaa; background: #fafafa; }
+    .option-item.selected { border-color: #555; background: #f0f0f0; }
+    .option-item.ok     { border-color: #2a8a2a; background: #e8f5e8; }
+    .option-item.bad    { border-color: #cc3333; background: #fbeaea; }
+    .option-item.missed { border-color: #c8930a; background: #fff8e0; }
     .option-item.disabled { cursor: default; }
-
-    .opt-input {
-      width: 17px; height: 17px; margin-right: 11px;
-      flex-shrink: 0; cursor: pointer; pointer-events: none;
-    }
+    .opt-letter { width: 26px; height: 26px; border-radius: 50%; background: #e0e0e0; color: #666; font-size: 0.72rem; font-weight: bold; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; transition: background .12s, color .12s; }
+    .option-item.selected .opt-letter { background: #555; color: white; }
+    .option-item.ok  .opt-letter { background: #2a8a2a; color: white; }
+    .option-item.bad .opt-letter { background: #cc3333; color: white; }
+    .option-item.missed .opt-letter { background: #c8930a; color: white; }
+    .opt-input { width: 16px; height: 16px; margin-right: 10px; flex-shrink: 0; pointer-events: none; }
     .opt-text { font-size: 0.9rem; color: #333; line-height: 1.35; }
 
-    .feedback-bar {
-      margin-top: 14px; padding: 9px 14px;
-      border-radius: 4px; font-size: 0.88rem; display: none;
-    }
-    .feedback-bar.ok  { display: block; background: #d4edda; color: #155724; }
-    .feedback-bar.bad { display: block; background: #f8d7da; color: #721c24; }
+    /* FILLBLANK */
+    .fillblank-box { background: white; border-radius: 3px; padding: 22px 24px; box-shadow: 0 1px 3px rgba(0,0,0,.06); font-size: 1rem; line-height: 2.2; color: #333; border: 2px solid #ddd; }
+    .blank-select { font-size: 0.88rem; padding: 4px 10px; border: 2px solid #aaa; border-radius: 3px; background: #f5f5f5; cursor: pointer; min-width: 150px; font-family: Arial, Helvetica, sans-serif; transition: border-color .12s; }
+    .blank-select:focus { outline: none; border-color: #555; }
+    .blank-select.ok  { border-color: #2a8a2a; background: #e8f5e8; color: #155724; }
+    .blank-select.bad { border-color: #cc3333; background: #fbeaea; color: #721c24; }
 
-    /* Nav panel */
-    .nav-panel {
-      position: absolute; right: 14px; bottom: 14px;
-      width: 130px; background: #1a1a1a;
-      border-radius: 5px; padding: 12px 12px 10px;
-      display: flex; flex-direction: column; align-items: center;
-      z-index: 10; box-shadow: 0 4px 12px rgba(0,0,0,.5);
-    }
+    /* ORDER */
+    .order-instruction { font-size: 0.82rem; color: #666; margin-bottom: 12px; font-style: italic; }
+    .order-list { list-style: none; }
+    .order-item { display: flex; align-items: center; padding: 11px 14px; margin-bottom: 8px; background: white; border: 2px solid #ddd; border-radius: 3px; cursor: grab; user-select: none; box-shadow: 0 1px 3px rgba(0,0,0,.06); transition: border-color .12s, opacity .15s, background .12s; }
+    .order-item.dragging { opacity: .35; border-color: #e8a020; }
+    .order-item.drag-over { border-color: #e8a020; background: #fff8e8; }
+    .order-item.ok  { border-color: #2a8a2a; background: #e8f5e8; cursor: default; }
+    .order-item.bad { border-color: #cc3333; background: #fbeaea; cursor: default; }
+    .order-item.disabled { cursor: default; }
+    .drag-handle { color: #bbb; margin-right: 10px; font-size: 1rem; flex-shrink: 0; line-height: 1; }
+    .order-pos { width: 26px; height: 26px; border-radius: 50%; background: #e8a020; color: white; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; }
+    .order-item.ok  .order-pos { background: #2a8a2a; }
+    .order-item.bad .order-pos { background: #cc3333; }
 
-    /* Circular progress */
-    .circ-wrap { position: relative; width: 78px; height: 78px; margin-bottom: 8px; }
+    /* FEEDBACK */
+    .feedback-bar { margin-top: 14px; padding: 10px 14px; border-radius: 3px; font-size: 0.88rem; display: none; }
+    .feedback-bar.ok  { display: block; background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .feedback-bar.bad { display: block; background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+    /* NAV PANEL */
+    .nav-panel { position: absolute; right: 16px; bottom: 68px; width: 128px; background: #1a1a1a; border-radius: 5px; padding: 12px 10px 10px; display: flex; flex-direction: column; align-items: center; z-index: 10; box-shadow: 0 4px 16px rgba(0,0,0,.6); }
+    .circ-wrap { position: relative; width: 78px; height: 78px; margin-bottom: 7px; }
     .circ-wrap svg { transform: rotate(-90deg); }
     .circ-track { fill: none; stroke: #3a3a3a; stroke-width: 8; }
     .circ-fill  { fill: none; stroke: #e8a020; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset .35s; }
-    .circ-pct {
-      position: absolute; top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 1.05rem; font-weight: bold; color: white;
-    }
+    .circ-pct { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 1rem; font-weight: bold; color: white; }
+    .pregunta-lbl { color: #888; font-size: 0.68rem; margin-bottom: 9px; text-align: center; line-height: 1.4; }
+    .validate-btn { background: #2a2a2a; color: white; border: 1px solid #555; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 1.15rem; display: flex; align-items: center; justify-content: center; transition: background .12s; }
+    .validate-btn:hover { background: #444; }
+    .validate-btn:disabled { opacity: .3; cursor: default; }
 
-    .pregunta-lbl { color: #999; font-size: 0.75rem; margin-bottom: 10px; text-align: center; }
-
-    .validate-btn {
-      background: #2a2a2a; color: white; border: 1px solid #555;
-      width: 38px; height: 38px; border-radius: 50%; cursor: pointer;
-      font-size: 1.15rem; margin-bottom: 0;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .validate-btn:hover { background: #3a3a3a; }
-    .validate-btn:disabled { opacity: .35; cursor: default; }
-
-    /* Footer nav */
-    .q-nav-footer {
-      height: 54px; background: #2a2a2a; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 24px;
-    }
-    .btn-nav {
-      background: #111; color: white;
-      border: 1px solid #444; padding: 9px 24px;
-      font-size: 0.8rem; cursor: pointer; border-radius: 3px;
-      font-weight: bold; letter-spacing: .5px; min-width: 130px; text-align: center;
-    }
-    .btn-nav:hover { background: #222; }
+    /* NAV FOOTER */
+    .q-nav-footer { height: 52px; background: #222; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; border-top: 1px solid #444; }
+    .btn-nav { background: #333; color: #ddd; border: 1px solid #555; padding: 8px 22px; font-size: 0.78rem; cursor: pointer; border-radius: 3px; font-weight: bold; letter-spacing: .5px; min-width: 125px; text-align: center; transition: background .12s; }
+    .btn-nav:hover { background: #444; }
     .btn-nav:disabled { opacity: .3; cursor: default; }
-    .btn-nav.finish { background: #e8a020; border-color: #e8a020; }
+    .btn-nav.finish { background: #e8a020; color: white; border-color: #e8a020; }
     .btn-nav.finish:hover { background: #cf8f18; }
 
-    /* Bottom red bar */
-    .bottom-bar {
-      height: 9px; background: #1a1a1a;
-      position: relative; flex-shrink: 0;
-    }
+    /* BOTTOM BAR */
+    .bottom-bar { height: 8px; background: #111; flex-shrink: 0; }
     .bottom-fill { height: 100%; background: #cc0000; transition: width .3s; width: 0%; }
 
-    /* ── RESULTS ── */
-    #results-screen {
-      display: none; flex-direction: column; align-items: center;
-      justify-content: flex-start; min-height: 100vh;
-      background: #2a2a2a; color: white;
-      text-align: center; padding: 30px 20px; overflow-y: auto;
-    }
-    .res-title { font-size: 1.7rem; margin-bottom: 4px; color: #e8a020; }
-    .res-score { font-size: 3.8rem; font-weight: bold; margin: 12px 0 6px; }
+    /* RESULTS */
+    #results-screen { display: none; flex-direction: column; align-items: center; justify-content: flex-start; min-height: 100vh; background: #2a2a2a; color: white; text-align: center; padding: 30px 20px; overflow-y: auto; }
+    .res-title { font-size: 1.6rem; margin-bottom: 4px; color: #e8a020; text-transform: uppercase; letter-spacing: .5px; }
+    .res-score { font-size: 3.5rem; font-weight: bold; margin: 10px 0 5px; }
     .res-score.pass { color: #4caf50; }
     .res-score.fail { color: #f44336; }
-    .res-verdict { font-size: 1.3rem; font-weight: bold; margin-bottom: 6px; }
+    .res-verdict { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; }
     .res-verdict.pass { color: #4caf50; }
     .res-verdict.fail { color: #f44336; }
-    .res-note { font-size: 0.82rem; color: #999; margin-bottom: 20px; }
-    .res-details {
-      background: #3a3a3a; border-radius: 8px;
-      padding: 18px 28px; margin-bottom: 22px;
-      text-align: left; width: 100%; max-width: 560px;
-    }
-    .res-details h3 { color: #e8a020; margin-bottom: 12px; font-size: 0.95rem; }
-    .area-row {
-      display: flex; align-items: center; gap: 10px;
-      padding: 7px 0; border-bottom: 1px solid #4a4a4a; font-size: 0.82rem;
-    }
+    .res-note { font-size: 0.8rem; color: #888; margin-bottom: 20px; }
+    .res-details { background: #333; border-radius: 6px; padding: 16px 26px; margin-bottom: 20px; text-align: left; width: 100%; max-width: 540px; }
+    .res-details h3 { color: #e8a020; margin-bottom: 10px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: .5px; }
+    .area-row { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid #444; font-size: 0.82rem; }
     .area-row:last-child { border-bottom: none; }
     .area-name { flex: 1; }
-    .area-pts { color: #ccc; width: 44px; text-align: right; font-size: 0.8rem; }
-    .area-bar-wrap { width: 110px; height: 7px; background: #555; border-radius: 4px; overflow: hidden; }
-    .area-bar { height: 100%; background: #e8a020; border-radius: 4px; }
-
-    .btn-restart {
-      background: #e8a020; color: white; border: none;
-      padding: 12px 38px; font-size: 0.95rem; border-radius: 4px;
-      cursor: pointer; font-weight: bold;
-    }
+    .area-pts { color: #bbb; width: 55px; text-align: right; font-size: 0.78rem; }
+    .area-bar-wrap { width: 110px; height: 6px; background: #555; border-radius: 3px; overflow: hidden; }
+    .area-bar { height: 100%; background: #e8a020; border-radius: 3px; }
+    .btn-restart { background: #e8a020; color: white; border: none; padding: 11px 36px; font-size: 0.92rem; border-radius: 3px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: .5px; }
     .btn-restart:hover { background: #cf8f18; }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════════════ INTRO -->
+<!-- INTRO -->
 <div id="intro-screen">
   <h1>Simulador ACTIC</h1>
   <p class="subtitle">Certificat de competències en tecnologies de la informació i la comunicació</p>
@@ -210,13 +138,14 @@
     <h3>Nivell 1 · Bàsic (Participant)</h3>
     <p><span class="lbl">Nombre de preguntes:</span> <strong>40</strong></p>
     <p><span class="lbl">Temps disponible:</span> <strong>75 minuts</strong></p>
-    <p><span class="lbl">Per superar la prova:</span> <strong>70% mínim (28/40 pts)</strong></p>
-    <p><span class="lbl">Tipus de preguntes:</span> <strong>Selecció simple, selecció múltiple i vertader/fals</strong></p>
+    <p><span class="lbl">Per superar la prova:</span> <strong>70% mínim</strong></p>
+    <p><span class="lbl">Tipus de preguntes:</span> <strong>Selecció simple/múltiple, vertader/fals, omplir buits, ordenar accions</strong></p>
+    <p><span class="lbl">Ponderació:</span> <strong>Simple ×0,8 · Mitjà ×1,0 · Complex ×1,2</strong></p>
   </div>
-  <button class="btn-start" onclick="startExam()">INICIAR LA PROVA</button>
+  <button class="btn-start" onclick="startExam()">Iniciar la prova</button>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ EXAM -->
+<!-- EXAM -->
 <div id="exam-screen">
   <div class="q-header">
     <div class="q-header-left">
@@ -232,13 +161,11 @@
 
   <div class="content-area">
     <div class="options-panel" id="options-panel"></div>
-
     <div class="nav-panel">
       <div class="circ-wrap">
         <svg width="78" height="78" viewBox="0 0 78 78">
           <circle class="circ-track" cx="39" cy="39" r="31"/>
-          <circle class="circ-fill" id="circ-fill" cx="39" cy="39" r="31"
-            stroke-dasharray="194.8" stroke-dashoffset="194.8"/>
+          <circle class="circ-fill" id="circ-fill" cx="39" cy="39" r="31" stroke-dasharray="194.8" stroke-dashoffset="194.8"/>
         </svg>
         <div class="circ-pct" id="circ-pct">0%</div>
       </div>
@@ -248,36 +175,41 @@
   </div>
 
   <div class="q-nav-footer">
-    <button class="btn-nav" id="btn-prev" onclick="prevQ()" disabled>← ANTERIOR</button>
-    <button class="btn-nav" id="btn-next" onclick="nextQ()">SEGÜENT →</button>
+    <button class="btn-nav" id="btn-prev" onclick="prevQ()" disabled>← Anterior</button>
+    <button class="btn-nav" id="btn-next" onclick="nextQ()">Següent →</button>
   </div>
 
-  <div class="bottom-bar">
-    <div class="bottom-fill" id="bottom-fill"></div>
-  </div>
+  <div class="bottom-bar"><div class="bottom-fill" id="bottom-fill"></div></div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════ RESULTS -->
+<!-- RESULTS -->
 <div id="results-screen">
   <h2 class="res-title">Resultat de la prova</h2>
   <div class="res-score" id="res-score">—</div>
   <div class="res-verdict" id="res-verdict">—</div>
-  <p class="res-note">Cal un mínim del 70% (28/40 punts) per superar la prova</p>
+  <p class="res-note" id="res-note">Cal un mínim del 70% per superar la prova</p>
   <div class="res-details">
     <h3>Resultats per àrea de competència</h3>
     <div id="area-results"></div>
   </div>
-  <button class="btn-restart" onclick="restartExam()">TORNAR A FER LA PROVA</button>
+  <button class="btn-restart" onclick="restartExam()">Tornar a fer la prova</button>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════════════
-// BANC DE PREGUNTES – Nivell 1 Bàsic (40 preguntes)
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// PONDERACIÓ PER GRAU D'INTERACCIÓ
+// simple=0.8  mitja=1.0  complex=1.2
+// ═══════════════════════════════════════════════════
+const WEIGHT = { simple: 0.8, mitja: 1.0, complex: 1.2 };
+
+// ═══════════════════════════════════════════════════
+// BANC DE PREGUNTES – Nivell 1 Bàsic
+// ═══════════════════════════════════════════════════
 const QUESTIONS = [
+
   // ── ÀREA 1: Cerca, gestió i anàlisi de la informació ──────────
   {
-    id:1, area:1, ind:"1.1.1",
+    id:1, area:1, ind:"1.1.1", grade:"simple",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"single",
     q:"Quina de les següents és una funcionalitat bàsica del navegador web?",
@@ -291,7 +223,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:2, area:1, ind:"1.1.2",
+    id:2, area:1, ind:"1.1.2", grade:"simple",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"single",
     q:"Quina és la diferència principal entre navegar i cercar a Internet?",
@@ -305,11 +237,11 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:3, area:1, ind:"1.1.3",
+    id:3, area:1, ind:"1.1.3", grade:"simple",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"multiple",
     q:"Quins paràmetres bàsics pots tenir en compte quan compares resultats d'una cerca a Internet?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"El format del contingut (text, imatge, vídeo...)"},
       {id:"b", t:"Les paraules clau del contingut"},
@@ -319,7 +251,7 @@ const QUESTIONS = [
     cor:["a","b"]
   },
   {
-    id:4, area:1, ind:"1.1.4",
+    id:4, area:1, ind:"1.1.4", grade:"simple",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"single",
     q:"Quina característica és essencial en una font d'informació fiable?",
@@ -333,11 +265,11 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:5, area:1, ind:"1.1.5",
+    id:5, area:1, ind:"1.1.5", grade:"simple",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"multiple",
     q:"Quins criteris simples pots fer servir per delimitar una cerca a Internet als teus objectius?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"Cercar per idioma del contingut"},
       {id:"b", t:"Filtrar per tipus de contingut (imatges, vídeos...)"},
@@ -347,7 +279,7 @@ const QUESTIONS = [
     cor:["a","b"]
   },
   {
-    id:6, area:1, ind:"1.2.1",
+    id:6, area:1, ind:"1.2.1", grade:"simple",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"single",
     q:"Quina operació bàsica pots fer amb els fitxers del teu ordinador?",
@@ -361,11 +293,11 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:7, area:1, ind:"1.2.2",
+    id:7, area:1, ind:"1.2.2", grade:"simple",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"multiple",
     q:"Quines de les següents són ubicacions habituals per emmagatzemar informació digital?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"El disc dur local de l'ordinador"},
       {id:"b", t:"Una memòria externa (USB o disc dur extern)"},
@@ -375,7 +307,7 @@ const QUESTIONS = [
     cor:["a","b","c"]
   },
   {
-    id:8, area:1, ind:"1.2.5",
+    id:8, area:1, ind:"1.2.5", grade:"simple",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"single",
     q:"Quina eina fas servir habitualment per aplegar i classificar dades numèriques amb un objectiu concret?",
@@ -389,7 +321,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:9, area:1, ind:"1.3.2",
+    id:9, area:1, ind:"1.3.2", grade:"simple",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"single",
     q:"Quina de les següents és una funció de rang habitual en un full de càlcul?",
@@ -403,11 +335,11 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:10, area:1, ind:"1.3.3",
+    id:10, area:1, ind:"1.3.3", grade:"simple",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"multiple",
     q:"Quines de les següents eines serveixen per representar dades de manera visual?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"Gràfics de barres o de línies"},
       {id:"b", t:"Diagrames"},
@@ -416,10 +348,36 @@ const QUESTIONS = [
     ],
     cor:["a","b","c"]
   },
+  {
+    id:47, area:1, ind:"1.1.2", grade:"mitja",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"fillblank",
+    q:"Completa les frases sobre navegació i cerca a Internet",
+    instr:"Selecciona el terme correcte per a cada espai en blanc",
+    template:"El __0__ és un programa que ens permet accedir a llocs web introduint una adreça o fent clic en un enllaç. Per trobar informació sobre un tema concret fem servir un __1__ de cerca com Google o Bing.",
+    blanks:[
+      {id:0, cor:"b", opts:[{id:"a",t:"full de càlcul"},{id:"b",t:"navegador"},{id:"c",t:"editor de text"},{id:"d",t:"antivirus"}]},
+      {id:1, cor:"a", opts:[{id:"a",t:"motor"},{id:"b",t:"sistema operatiu"},{id:"c",t:"firewall"},{id:"d",t:"servidor"}]}
+    ]
+  },
+  {
+    id:48, area:1, ind:"1.2.1", grade:"complex",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"order",
+    q:"Ordena els passos per desar correctament un document en una carpeta nova",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Obrir l'aplicació i crear o editar el document"},
+      {id:"b", t:"Fer clic a 'Fitxer' > 'Desa com a'"},
+      {id:"c", t:"Crear una carpeta nova a la ubicació desitjada"},
+      {id:"d", t:"Escriure el nom del fitxer i fer clic a 'Desa'"}
+    ],
+    cor:["a","b","c","d"]
+  },
 
   // ── ÀREA 2: Comunicació i col·laboració ──────────────────────
   {
-    id:11, area:2, ind:"2.1.2",
+    id:11, area:2, ind:"2.1.2", grade:"simple",
     areaName:"2. Comunicació i col·laboració",
     type:"single",
     q:"Quina de les següents eines de comunicació digital és síncrona (en temps real)?",
@@ -433,11 +391,11 @@ const QUESTIONS = [
     cor:["c"]
   },
   {
-    id:12, area:2, ind:"2.1.2",
+    id:12, area:2, ind:"2.1.2", grade:"simple",
     areaName:"2. Comunicació i col·laboració",
     type:"multiple",
     q:"Quines funcionalitats bàsiques pots configurar en una eina de comunicació digital?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"Les notificacions"},
       {id:"b", t:"La imatge de perfil"},
@@ -447,7 +405,7 @@ const QUESTIONS = [
     cor:["a","b","d"]
   },
   {
-    id:13, area:2, ind:"2.1.3",
+    id:13, area:2, ind:"2.1.3", grade:"simple",
     areaName:"2. Comunicació i col·laboració",
     type:"truefalse",
     q:"Quan comparteixo fitxers digitals, he de respectar la normativa de propietat intel·lectual i de protecció de dades personals.",
@@ -456,7 +414,7 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:14, area:2, ind:"2.1.4",
+    id:14, area:2, ind:"2.1.4", grade:"simple",
     areaName:"2. Comunicació i col·laboració",
     type:"single",
     q:"Quina de les següents opcions descriu millor una xarxa social digital?",
@@ -470,7 +428,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:15, area:2, ind:"2.1.6",
+    id:15, area:2, ind:"2.1.6", grade:"simple",
     areaName:"2. Comunicació i col·laboració",
     type:"truefalse",
     q:"A Internet és important compartir només continguts i informació que hem contrastat i verificat prèviament.",
@@ -479,7 +437,7 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:16, area:2, ind:"2.2.1",
+    id:16, area:2, ind:"2.2.1", grade:"simple",
     areaName:"2. Comunicació i col·laboració",
     type:"single",
     q:"Quina eina és més adequada per treballar simultàniament amb altres persones en un mateix document?",
@@ -493,7 +451,7 @@ const QUESTIONS = [
     cor:["c"]
   },
   {
-    id:17, area:2, ind:"2.2.2",
+    id:17, area:2, ind:"2.2.2", grade:"simple",
     areaName:"2. Comunicació i col·laboració",
     type:"truefalse",
     q:"En un entorn digital de treball col·laboratiu és important seguir les normes d'ús establertes per l'equip.",
@@ -502,7 +460,7 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:18, area:2, ind:"2.3.1",
+    id:18, area:2, ind:"2.3.1", grade:"simple",
     areaName:"2. Comunicació i col·laboració",
     type:"single",
     q:"Quin dels següents exemples mostra una participació en la societat digital?",
@@ -516,7 +474,7 @@ const QUESTIONS = [
     cor:["c"]
   },
   {
-    id:19, area:2, ind:"2.3.4",
+    id:19, area:2, ind:"2.3.4", grade:"simple",
     areaName:"2. Comunicació i col·laboració",
     type:"truefalse",
     q:"Cal mostrar una actitud positiva envers la inclusió digital i ser conscients de les problemàtiques socials que generen les tecnologies.",
@@ -525,7 +483,7 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:20, area:2, ind:"2.1.5",
+    id:20, area:2, ind:"2.1.5", grade:"simple",
     areaName:"2. Comunicació i col·laboració",
     type:"single",
     q:"Quina diferència hi ha entre la realitat virtual (RV) i la realitat augmentada (RA)?",
@@ -538,14 +496,26 @@ const QUESTIONS = [
     ],
     cor:["a"]
   },
+  {
+    id:49, area:2, ind:"2.1.2", grade:"mitja",
+    areaName:"2. Comunicació i col·laboració",
+    type:"fillblank",
+    q:"Completa les frases sobre eines de comunicació digital",
+    instr:"Selecciona el terme correcte per a cada espai en blanc",
+    template:"El correu electrònic és un exemple de comunicació __0__ perquè el receptor no ha d'estar connectat en el mateix moment. En canvi, la videoconferència és __1__ perquè emissor i receptor interactuen en temps real.",
+    blanks:[
+      {id:0, cor:"a", opts:[{id:"a",t:"asíncrona"},{id:"b",t:"síncrona"},{id:"c",t:"analògica"},{id:"d",t:"presencial"}]},
+      {id:1, cor:"b", opts:[{id:"a",t:"asíncrona"},{id:"b",t:"síncrona"},{id:"c",t:"analògica"},{id:"d",t:"unidireccional"}]}
+    ]
+  },
 
   // ── ÀREA 3: Creació de continguts ────────────────────────────
   {
-    id:21, area:3, ind:"3.1.1",
+    id:21, area:3, ind:"3.1.1", grade:"simple",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"multiple",
     q:"Quins dels següents són els tipus principals de continguts digitals?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"Text"},
       {id:"b", t:"Imatge"},
@@ -555,7 +525,7 @@ const QUESTIONS = [
     cor:["a","b","c","d"]
   },
   {
-    id:22, area:3, ind:"3.1.2",
+    id:22, area:3, ind:"3.1.2", grade:"simple",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"single",
     q:"Quina aplicació fas servir habitualment per crear una presentació digital?",
@@ -569,7 +539,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:23, area:3, ind:"3.1.3",
+    id:23, area:3, ind:"3.1.3", grade:"simple",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"truefalse",
     q:"Puc crear continguts digitals simples com textos, presentacions, imatges o àudios per expressar-me digitalment.",
@@ -578,11 +548,11 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:24, area:3, ind:"3.1.4",
+    id:24, area:3, ind:"3.1.4", grade:"simple",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"multiple",
     q:"Quines de les següents són funcionalitats bàsiques d'una aplicació per crear continguts digitals?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"El menú Fitxer (per desar i obrir documents)"},
       {id:"b", t:"El menú Edició (per copiar i enganxar)"},
@@ -592,7 +562,7 @@ const QUESTIONS = [
     cor:["a","b","c"]
   },
   {
-    id:25, area:3, ind:"3.1.5",
+    id:25, area:3, ind:"3.1.5", grade:"simple",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"single",
     q:"Quina eina bàsica fas servir per estructurar jeràrquicament un document digital?",
@@ -606,7 +576,7 @@ const QUESTIONS = [
     cor:["a"]
   },
   {
-    id:26, area:3, ind:"3.2.1",
+    id:26, area:3, ind:"3.2.1", grade:"simple",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"truefalse",
     q:"Puc crear dissenys gràfics bàsics combinant continguts digitals de tipus diferent (text, imatge, color...) per expressar-me de manera visual.",
@@ -615,7 +585,7 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:27, area:3, ind:"3.2.2",
+    id:27, area:3, ind:"3.2.2", grade:"simple",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"single",
     q:"On pots trobar imatges, plantilles o àudios per fer servir en els teus continguts digitals?",
@@ -629,11 +599,11 @@ const QUESTIONS = [
     cor:["a"]
   },
   {
-    id:28, area:3, ind:"3.4.1",
+    id:28, area:3, ind:"3.4.1", grade:"simple",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"multiple",
     q:"Quins dels següents exemples corresponen a llenguatges o entorns de programació?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"Python"},
       {id:"b", t:"Scratch (programació per blocs)"},
@@ -643,7 +613,7 @@ const QUESTIONS = [
     cor:["a","b","c"]
   },
   {
-    id:29, area:3, ind:"3.4.2",
+    id:29, area:3, ind:"3.4.2", grade:"simple",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"truefalse",
     q:"El pensament computacional es basa en el raonament lògic per identificar i resoldre problemes de manera sistemàtica.",
@@ -652,7 +622,7 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:30, area:3, ind:"3.4.4",
+    id:30, area:3, ind:"3.4.4", grade:"simple",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"single",
     q:"Quin dels següents és un exemple de sistema d'intel·ligència artificial?",
@@ -665,14 +635,40 @@ const QUESTIONS = [
     ],
     cor:["b"]
   },
+  {
+    id:50, area:3, ind:"3.1.2", grade:"mitja",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"fillblank",
+    q:"Completa les frases sobre aplicacions de creació de continguts digitals",
+    instr:"Selecciona el terme correcte per a cada espai en blanc",
+    template:"Per crear i editar textos llargs fem servir un __0__. Per organitzar i calcular dades numèriques en taules fem servir un __1__.",
+    blanks:[
+      {id:0, cor:"b", opts:[{id:"a",t:"editor de vídeo"},{id:"b",t:"processador de textos"},{id:"c",t:"navegador web"},{id:"d",t:"antivirus"}]},
+      {id:1, cor:"c", opts:[{id:"a",t:"editor d'imatges"},{id:"b",t:"programa de presentacions"},{id:"c",t:"full de càlcul"},{id:"d",t:"gestor de correu"}]}
+    ]
+  },
+  {
+    id:51, area:3, ind:"3.1.5", grade:"complex",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"order",
+    q:"Ordena els passos per crear una presentació digital senzilla",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Afegir text, imatges i elements visuals a les diapositives"},
+      {id:"b", t:"Obrir el programa de presentacions"},
+      {id:"c", t:"Desar i, si cal, exportar o compartir la presentació"},
+      {id:"d", t:"Crear la primera diapositiva i triar una plantilla o disseny"}
+    ],
+    cor:["b","d","a","c"]
+  },
 
   // ── ÀREA 4: Seguretat, benestar i civisme ────────────────────
   {
-    id:31, area:4, ind:"4.1.1",
+    id:31, area:4, ind:"4.1.1", grade:"simple",
     areaName:"4. Seguretat, benestar i civisme",
     type:"multiple",
     q:"Quins dels següents són riscos associats a l'ús de dispositius tecnològics?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"Robatori o pèrdua de dades personals"},
       {id:"b", t:"Suplantació d'identitat"},
@@ -682,11 +678,11 @@ const QUESTIONS = [
     cor:["a","b","c"]
   },
   {
-    id:32, area:4, ind:"4.1.2",
+    id:32, area:4, ind:"4.1.2", grade:"simple",
     areaName:"4. Seguretat, benestar i civisme",
     type:"multiple",
     q:"Quines mesures bàsiques de protecció pots aplicar als teus dispositius digitals?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"Usar contrasenyes segures i difícils d'endevinar"},
       {id:"b", t:"Activar el bloqueig de pantalla"},
@@ -696,7 +692,7 @@ const QUESTIONS = [
     cor:["a","b","d"]
   },
   {
-    id:33, area:4, ind:"4.1.3",
+    id:33, area:4, ind:"4.1.3", grade:"simple",
     areaName:"4. Seguretat, benestar i civisme",
     type:"single",
     q:"Quina mesura et protegeix millor contra el programari maliciós (virus) en el teu dispositiu?",
@@ -710,7 +706,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:34, area:4, ind:"4.1.4",
+    id:34, area:4, ind:"4.1.4", grade:"simple",
     areaName:"4. Seguretat, benestar i civisme",
     type:"truefalse",
     q:"És recomanable fer còpies de seguretat dels dispositius i continguts digitals de manera periòdica.",
@@ -719,7 +715,7 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:35, area:4, ind:"4.2.1",
+    id:35, area:4, ind:"4.2.1", grade:"simple",
     areaName:"4. Seguretat, benestar i civisme",
     type:"truefalse",
     q:"Quan ens registrem en serveis en línia, hem de valorar quines dades personals proporcionem i si és convenient fer-ho.",
@@ -728,7 +724,7 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:36, area:4, ind:"4.2.2",
+    id:36, area:4, ind:"4.2.2", grade:"simple",
     areaName:"4. Seguretat, benestar i civisme",
     type:"single",
     q:"Com has d'actuar respecte a les condicions d'ús quan t'inscrius en un servei en línia?",
@@ -742,7 +738,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:37, area:4, ind:"4.3.2",
+    id:37, area:4, ind:"4.3.2", grade:"simple",
     areaName:"4. Seguretat, benestar i civisme",
     type:"truefalse",
     q:"L'ús excessiu de la tecnologia digital pot generar riscos per a la salut, com ara conductes addictives o esgotament digital.",
@@ -751,11 +747,11 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:38, area:4, ind:"4.5.2",
+    id:38, area:4, ind:"4.5.2", grade:"simple",
     areaName:"4. Seguretat, benestar i civisme",
     type:"multiple",
     q:"Quines de les següents afirmacions sobre la propietat intel·lectual en entorns digitals són correctes?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"He de respectar els drets de propietat intel·lectual dels continguts que faig servir"},
       {id:"b", t:"Els continguts publicats a Internet es poden usar lliurement per a qualsevol propòsit"},
@@ -764,10 +760,22 @@ const QUESTIONS = [
     ],
     cor:["a","c"]
   },
+  {
+    id:52, area:4, ind:"4.1.2", grade:"mitja",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"fillblank",
+    q:"Completa les frases sobre seguretat dels dispositius digitals",
+    instr:"Selecciona el terme correcte per a cada espai en blanc",
+    template:"Un __0__ és un programa maliciós que pot danyar el teu dispositiu o robar les teves dades. Per protegir-te, és recomanable instal·lar un programa __1__ i mantenir-lo sempre actualitzat.",
+    blanks:[
+      {id:0, cor:"a", opts:[{id:"a",t:"virus"},{id:"b",t:"navegador"},{id:"c",t:"sistema operatiu"},{id:"d",t:"full de càlcul"}]},
+      {id:1, cor:"c", opts:[{id:"a",t:"de presentacions"},{id:"b",t:"editor de text"},{id:"c",t:"antivirus"},{id:"d",t:"de videoconferència"}]}
+    ]
+  },
 
   // ── ÀREA 5: Autonomia i resolució de problemes ───────────────
   {
-    id:39, area:5, ind:"5.1.1",
+    id:39, area:5, ind:"5.1.1", grade:"simple",
     areaName:"5. Autonomia i resolució de problemes",
     type:"single",
     q:"Quina és la diferència principal entre maquinari (hardware) i programari (software)?",
@@ -781,11 +789,11 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:40, area:5, ind:"5.1.2",
+    id:40, area:5, ind:"5.1.2", grade:"simple",
     areaName:"5. Autonomia i resolució de problemes",
     type:"multiple",
     q:"Quins dels següents dispositius es consideren dispositius digitals d'ús comú?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"L'ordinador personal (PC o portàtil)"},
       {id:"b", t:"El telèfon intel·ligent (smartphone)"},
@@ -795,7 +803,7 @@ const QUESTIONS = [
     cor:["a","b","c"]
   },
   {
-    id:41, area:5, ind:"5.1.3",
+    id:41, area:5, ind:"5.1.3", grade:"simple",
     areaName:"5. Autonomia i resolució de problemes",
     type:"single",
     q:"Quina de les següents tasques correspon a les funcions bàsiques del sistema operatiu?",
@@ -809,11 +817,11 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:42, area:5, ind:"5.1.5",
+    id:42, area:5, ind:"5.1.5", grade:"simple",
     areaName:"5. Autonomia i resolució de problemes",
     type:"multiple",
     q:"Quins dels següents són tipus de connectivitat habituals entre dispositius tecnològics?",
-    instr:"Selecciona les respostes correctes",
+    instr:"Selecciona totes les respostes correctes",
     opts:[
       {id:"a", t:"Wi-Fi (connexió sense fils)"},
       {id:"b", t:"Bluetooth"},
@@ -823,7 +831,7 @@ const QUESTIONS = [
     cor:["a","b","c"]
   },
   {
-    id:43, area:5, ind:"5.2.2",
+    id:43, area:5, ind:"5.2.2", grade:"simple",
     areaName:"5. Autonomia i resolució de problemes",
     type:"single",
     q:"Quin dels següents és un exemple de tràmit bàsic que es pot fer en línia?",
@@ -837,7 +845,7 @@ const QUESTIONS = [
     cor:["a"]
   },
   {
-    id:44, area:5, ind:"5.2.5",
+    id:44, area:5, ind:"5.2.5", grade:"simple",
     areaName:"5. Autonomia i resolució de problemes",
     type:"truefalse",
     q:"Internet i les plataformes digitals ofereixen oportunitats per aprendre i seguir comunitats relacionades amb els nostres interessos personals i professionals.",
@@ -846,7 +854,7 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:45, area:5, ind:"5.4.1",
+    id:45, area:5, ind:"5.4.1", grade:"simple",
     areaName:"5. Autonomia i resolució de problemes",
     type:"single",
     q:"Quina és la primera acció que hauries de fer si el teu ordinador no s'engega correctament?",
@@ -860,75 +868,91 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:46, area:5, ind:"5.4.2",
+    id:46, area:5, ind:"5.4.2", grade:"simple",
     areaName:"5. Autonomia i resolució de problemes",
     type:"truefalse",
     q:"Puc buscar informació i suport a Internet (PMF/FAQ, fòrums, tutorials...) per intentar resoldre problemes tècnics habituals.",
     instr:"Selecciona Verdader o Fals",
     opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
     cor:["true"]
+  },
+  {
+    id:53, area:5, ind:"5.1.1", grade:"mitja",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"fillblank",
+    q:"Completa les frases sobre components d'un dispositiu digital",
+    instr:"Selecciona el terme correcte per a cada espai en blanc",
+    template:"La part física de l'ordinador (pantalla, teclat, ratolí...) s'anomena __0__. Els programes instal·lats a l'ordinador (sistema operatiu, aplicacions...) s'anomenen __1__.",
+    blanks:[
+      {id:0, cor:"b", opts:[{id:"a",t:"programari"},{id:"b",t:"maquinari"},{id:"c",t:"firmware"},{id:"d",t:"sistema operatiu"}]},
+      {id:1, cor:"a", opts:[{id:"a",t:"programari"},{id:"b",t:"maquinari"},{id:"c",t:"firmware"},{id:"d",t:"processador"}]}
+    ]
+  },
+  {
+    id:54, area:5, ind:"5.4.1", grade:"complex",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"order",
+    q:"Ordena les accions per resoldre un problema bàsic quan un dispositiu no s'encén",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Comprovar que el dispositiu està connectat correctament a la corrent"},
+      {id:"b", t:"Prémer el botó d'encesa i esperar uns segons"},
+      {id:"c", t:"Si s'encén però no funciona bé, reiniciar el dispositiu"},
+      {id:"d", t:"Si el problema continua, buscar ajuda o informació a Internet (FAQ, tutorials)"}
+    ],
+    cor:["a","b","c","d"]
   }
 ];
 
-// Seleccionem 40 preguntes: les 8 primeres de cada àrea (o totes si n'hi ha menys de 8)
-function selectQuestions() {
-  const areas = [1,2,3,4,5];
-  const perArea = 8;
-  let selected = [];
-  areas.forEach(a => {
-    const pool = QUESTIONS.filter(q => q.area === a);
-    selected = selected.concat(pool.slice(0, perArea));
-  });
-  // Barreja aleatòria
-  for (let i = selected.length - 1; i > 0; i--) {
+// ═══════════════════════════════════════════════════
+// SELECCIÓ DE PREGUNTES (8 per àrea, aleatori)
+// ═══════════════════════════════════════════════════
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [selected[i], selected[j]] = [selected[j], selected[i]];
+    [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return selected;
+  return arr;
 }
 
-// ═══════════════════════════════════════════════════════════════
+function selectQuestions() {
+  let selected = [];
+  [1,2,3,4,5].forEach(a => {
+    const pool = shuffle(QUESTIONS.filter(q => q.area === a));
+    selected = selected.concat(pool.slice(0, 8));
+  });
+  return shuffle(selected);
+}
+
+// ═══════════════════════════════════════════════════
 // ESTAT GLOBAL
-// ═══════════════════════════════════════════════════════════════
-let questions = [];
-let cur = 0;
-let userAns = [];
-let validated = [];
-let timerSecs = 75 * 60;
-let timerInterval = null;
+// ═══════════════════════════════════════════════════
+let questions = [], cur = 0, userAns = [], validated = [];
+let timerSecs = 75 * 60, timerInterval = null;
+const CIRC_R = 31, CIRC_C = 2 * Math.PI * CIRC_R;
 
-const CIRC_R = 31;
-const CIRC_C = 2 * Math.PI * CIRC_R; // ~194.8
-
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // TIMER
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 function startTimer() {
   timerInterval = setInterval(() => {
     timerSecs--;
-    updateTimerDisplay();
-    if (timerSecs <= 0) {
-      clearInterval(timerInterval);
-      finishExam();
-    }
+    const m = Math.floor(timerSecs / 60), s = timerSecs % 60;
+    document.getElementById('timer-val').textContent =
+      String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    document.getElementById('timer-box').className =
+      timerSecs < 300 ? 'timer-box urgent' : 'timer-box';
+    if (timerSecs <= 0) { clearInterval(timerInterval); finishExam(); }
   }, 1000);
 }
 
-function updateTimerDisplay() {
-  const m = Math.floor(timerSecs / 60);
-  const s = timerSecs % 60;
-  const el = document.getElementById('timer-val');
-  el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-  document.getElementById('timer-box').className = timerSecs < 300 ? 'timer-box urgent' : 'timer-box';
-}
-
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // INICIAR / REINICIAR
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 function startExam() {
   questions = selectQuestions();
   cur = 0;
-  userAns = questions.map(() => []);
+  userAns = questions.map(q => q.type === 'fillblank' ? {} : []);
   validated = questions.map(() => false);
   timerSecs = 75 * 60;
   document.getElementById('intro-screen').style.display = 'none';
@@ -943,20 +967,86 @@ function restartExam() {
   document.getElementById('intro-screen').style.display = 'flex';
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // RENDER PREGUNTA
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+const LETTERS = ['A','B','C','D','E','F'];
+const GRADE_LABEL = { simple:'Simple', mitja:'Mitjà', complex:'Complex' };
+
 function renderQ(idx) {
   const q = questions[idx];
 
-  document.getElementById('area-label').textContent = q.areaName + '  ·  Indicador ' + q.ind;
+  // Capçalera
+  document.getElementById('area-label').innerHTML =
+    q.areaName + ' &nbsp;·&nbsp; Indicador ' + q.ind +
+    ' <span class="grade-badge ' + q.grade + '">' + GRADE_LABEL[q.grade] + '</span>';
   document.getElementById('q-text').textContent = q.q;
   document.getElementById('q-instr').textContent = q.instr;
 
   const panel = document.getElementById('options-panel');
   panel.innerHTML = '';
 
-  q.opts.forEach(opt => {
+  if (q.type === 'single' || q.type === 'multiple' || q.type === 'truefalse') {
+    renderChoices(q, idx, panel);
+  } else if (q.type === 'fillblank') {
+    renderFillblank(q, idx, panel);
+  } else if (q.type === 'order') {
+    renderOrder(q, idx, panel);
+  }
+
+  // Feedback
+  if (validated[idx]) {
+    const pts = scoreQ(idx);
+    const fb = document.createElement('div');
+    fb.className = 'feedback-bar ' + (pts > 0 ? 'ok' : 'bad');
+    if (pts === 1) {
+      fb.textContent = '✓ Resposta correcta!';
+    } else if (pts > 0) {
+      fb.textContent = '✓ Parcialment correcta (' + Math.round(pts * 100) + '%)';
+    } else {
+      if (q.type === 'single' || q.type === 'truefalse') {
+        const corText = q.opts.filter(o => q.cor.includes(o.id)).map(o => o.t).join(', ');
+        fb.textContent = '✗ Incorrecta. Resposta correcta: ' + corText;
+      } else if (q.type === 'multiple') {
+        const corText = q.opts.filter(o => q.cor.includes(o.id)).map(o => o.t).join(' / ');
+        fb.textContent = '✗ Incorrecta. Respostes correctes: ' + corText;
+      } else if (q.type === 'fillblank') {
+        const corText = q.blanks.map((b, n) => {
+          const corOpt = b.opts.find(o => o.id === b.cor);
+          return 'Buit ' + (n+1) + ': ' + (corOpt ? corOpt.t : '');
+        }).join(' | ');
+        fb.textContent = '✗ Incorrecta. ' + corText;
+      } else if (q.type === 'order') {
+        fb.textContent = '✗ Ordre incorrecte. Revisa la seqüència correcta.';
+      }
+    }
+    panel.appendChild(fb);
+  }
+
+  // Navegació
+  document.getElementById('pregunta-lbl').textContent = 'Pregunta ' + (idx+1) + ' / ' + questions.length;
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-validate').disabled = validated[idx];
+
+  const btnNext = document.getElementById('btn-next');
+  if (idx === questions.length - 1) {
+    btnNext.textContent = 'Finalitzar';
+    btnNext.className = 'btn-nav finish';
+    btnNext.onclick = finishExam;
+  } else {
+    btnNext.textContent = 'Següent →';
+    btnNext.className = 'btn-nav';
+    btnNext.onclick = nextQ;
+  }
+
+  const pct = Math.round((idx / questions.length) * 100);
+  document.getElementById('circ-fill').style.strokeDashoffset = CIRC_C - (pct / 100) * CIRC_C;
+  document.getElementById('circ-pct').textContent = pct + '%';
+  document.getElementById('bottom-fill').style.width = ((idx + 1) / questions.length * 100) + '%';
+}
+
+function renderChoices(q, idx, panel) {
+  q.opts.forEach((opt, i) => {
     const isSelected = userAns[idx].includes(opt.id);
     const isVal = validated[idx];
     const isCorrect = q.cor.includes(opt.id);
@@ -964,7 +1054,6 @@ function renderQ(idx) {
 
     const item = document.createElement('div');
     item.id = 'opt-' + opt.id;
-
     let cls = 'option-item';
     if (isVal) {
       cls += ' disabled';
@@ -975,10 +1064,11 @@ function renderQ(idx) {
       if (isSelected) cls += ' selected';
     }
     item.className = cls;
+    if (!isVal) item.addEventListener('click', () => selectOpt(opt.id, q.type));
 
-    if (!isVal) {
-      item.addEventListener('click', () => selectOpt(opt.id, q.type));
-    }
+    const letter = document.createElement('span');
+    letter.className = 'opt-letter';
+    letter.textContent = LETTERS[i];
 
     const inputType = q.type === 'multiple' ? 'checkbox' : 'radio';
     const input = document.createElement('input');
@@ -991,58 +1081,126 @@ function renderQ(idx) {
     label.className = 'opt-text';
     label.textContent = opt.t;
 
+    item.appendChild(letter);
     item.appendChild(input);
     item.appendChild(label);
     panel.appendChild(item);
   });
-
-  // Feedback
-  if (validated[idx]) {
-    const pts = scoreQ(idx);
-    const fb = document.createElement('div');
-    fb.className = 'feedback-bar ' + (pts > 0 ? 'ok' : 'bad');
-    if (pts === 1) {
-      fb.textContent = '✓ Resposta correcta!';
-    } else if (pts > 0) {
-      fb.textContent = '✓ Parcialment correcta (' + Math.round(pts * 100) + '%)';
-    } else {
-      const corText = q.opts.filter(o => q.cor.includes(o.id)).map(o => o.t).join(', ');
-      fb.textContent = '✗ Incorrecta. Resposta correcta: ' + corText;
-    }
-    panel.appendChild(fb);
-  }
-
-  // Nav
-  document.getElementById('pregunta-lbl').textContent = 'Pregunta ' + (idx+1) + ' / ' + questions.length;
-  document.getElementById('btn-prev').disabled = idx === 0;
-  document.getElementById('btn-validate').disabled = validated[idx];
-
-  const btnNext = document.getElementById('btn-next');
-  if (idx === questions.length - 1) {
-    btnNext.textContent = 'FINALITZAR';
-    btnNext.className = 'btn-nav finish';
-    btnNext.onclick = finishExam;
-  } else {
-    btnNext.textContent = 'SEGÜENT →';
-    btnNext.className = 'btn-nav';
-    btnNext.onclick = nextQ;
-  }
-
-  // Cercle de progrés
-  const pct = Math.round((idx / questions.length) * 100);
-  document.getElementById('circ-fill').style.strokeDashoffset = CIRC_C - (pct / 100) * CIRC_C;
-  document.getElementById('circ-pct').textContent = pct + '%';
-
-  // Barra inferior
-  document.getElementById('bottom-fill').style.width = ((idx + 1) / questions.length * 100) + '%';
 }
 
-// ═══════════════════════════════════════════════════════════════
-// SELECCIÓ D'OPCIONS
-// ═══════════════════════════════════════════════════════════════
+function renderFillblank(q, idx, panel) {
+  const box = document.createElement('div');
+  box.className = 'fillblank-box';
+  const parts = q.template.split(/(__\d+__)/);
+  parts.forEach(part => {
+    const m = part.match(/^__(\d+)__$/);
+    if (m) {
+      const n = parseInt(m[1]);
+      const blank = q.blanks[n];
+      const sel = document.createElement('select');
+      sel.className = 'blank-select';
+      sel.dataset.blank = n;
+      sel.disabled = validated[idx];
+      const empty = document.createElement('option');
+      empty.value = '';
+      empty.textContent = '— tria —';
+      sel.appendChild(empty);
+      blank.opts.forEach(o => {
+        const opt = document.createElement('option');
+        opt.value = o.id;
+        opt.textContent = o.t;
+        if (userAns[idx][n] === o.id) opt.selected = true;
+        sel.appendChild(opt);
+      });
+      if (validated[idx]) {
+        sel.classList.add(userAns[idx][n] === blank.cor ? 'ok' : 'bad');
+      } else {
+        sel.addEventListener('change', () => {
+          userAns[idx][parseInt(sel.dataset.blank)] = sel.value || undefined;
+        });
+      }
+      box.appendChild(sel);
+    } else {
+      box.appendChild(document.createTextNode(part));
+    }
+  });
+  panel.appendChild(box);
+}
+
+function renderOrder(q, idx, panel) {
+  const order = userAns[idx].length ? userAns[idx] : q.items.map(i => i.id);
+  if (!userAns[idx].length) userAns[idx] = [...order];
+
+  const list = document.createElement('ul');
+  list.className = 'order-list';
+
+  order.forEach((id, pos) => {
+    const item = q.items.find(i => i.id === id);
+    const li = document.createElement('li');
+    li.className = 'order-item' + (validated[idx] ? ' disabled' : '');
+    li.draggable = !validated[idx];
+    li.dataset.id = id;
+    if (validated[idx]) li.classList.add(q.cor[pos] === id ? 'ok' : 'bad');
+
+    const handle = document.createElement('span');
+    handle.className = 'drag-handle';
+    handle.textContent = validated[idx] ? '' : '⠿';
+
+    const pos_el = document.createElement('span');
+    pos_el.className = 'order-pos';
+    pos_el.textContent = pos + 1;
+
+    const txt = document.createElement('span');
+    txt.className = 'opt-text';
+    txt.textContent = item.t;
+
+    li.appendChild(handle);
+    li.appendChild(pos_el);
+    li.appendChild(txt);
+    list.appendChild(li);
+  });
+
+  if (!validated[idx]) setupDrag(list, idx);
+  panel.appendChild(list);
+}
+
+function setupDrag(list, idx) {
+  let src = null;
+  list.querySelectorAll('.order-item').forEach(li => {
+    li.addEventListener('dragstart', e => {
+      src = li; li.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    li.addEventListener('dragend', () => {
+      li.classList.remove('dragging');
+      list.querySelectorAll('.order-item').forEach(i => i.classList.remove('drag-over'));
+    });
+    li.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (li !== src) li.classList.add('drag-over');
+    });
+    li.addEventListener('dragleave', () => li.classList.remove('drag-over'));
+    li.addEventListener('drop', e => {
+      e.preventDefault();
+      if (li !== src) {
+        const all = [...list.querySelectorAll('.order-item')];
+        const si = all.indexOf(src), di = all.indexOf(li);
+        list.insertBefore(src, si < di ? li.nextSibling : li);
+        userAns[idx] = [...list.querySelectorAll('.order-item')].map(i => i.dataset.id);
+        list.querySelectorAll('.order-item').forEach((item, i) => {
+          item.querySelector('.order-pos').textContent = i + 1;
+        });
+      }
+      li.classList.remove('drag-over');
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════
+// SELECCIÓ D'OPCIONS (single/multiple/truefalse)
+// ═══════════════════════════════════════════════════
 function selectOpt(optId, type) {
   if (validated[cur]) return;
-
   if (type === 'single' || type === 'truefalse') {
     userAns[cur] = [optId];
   } else {
@@ -1050,74 +1208,91 @@ function selectOpt(optId, type) {
     if (i > -1) userAns[cur].splice(i, 1);
     else userAns[cur].push(optId);
   }
-
-  // Actualitza visualment sense re-render complet
   const q = questions[cur];
   q.opts.forEach(opt => {
     const item = document.getElementById('opt-' + opt.id);
     if (!item) return;
-    const inp = item.querySelector('input');
     const sel = userAns[cur].includes(opt.id);
-    inp.checked = sel;
+    item.querySelector('input').checked = sel;
     item.classList.toggle('selected', sel);
+    const letter = item.querySelector('.opt-letter');
+    if (sel) { letter.style.background = '#555'; letter.style.color = 'white'; }
+    else { letter.style.background = ''; letter.style.color = ''; }
   });
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // VALIDAR
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+function hasAnswer(idx) {
+  const q = questions[idx];
+  if (q.type === 'fillblank') {
+    return q.blanks.every((b, n) => userAns[idx][n] && userAns[idx][n] !== '');
+  }
+  return userAns[idx].length > 0;
+}
+
 function validateAnswer() {
-  if (validated[cur] || userAns[cur].length === 0) return;
+  if (validated[cur] || !hasAnswer(cur)) return;
   validated[cur] = true;
   renderQ(cur);
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // NAVEGACIÓ
-// ═══════════════════════════════════════════════════════════════
-function nextQ() {
-  if (cur < questions.length - 1) { cur++; renderQ(cur); }
-}
-function prevQ() {
-  if (cur > 0) { cur--; renderQ(cur); }
-}
+// ═══════════════════════════════════════════════════
+function nextQ() { if (cur < questions.length - 1) { cur++; renderQ(cur); } }
+function prevQ() { if (cur > 0) { cur--; renderQ(cur); } }
 
-// ═══════════════════════════════════════════════════════════════
-// PUNTUACIÓ
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
+// PUNTUACIÓ (retorna 0–1, fracció de la pregunta)
+// ═══════════════════════════════════════════════════
 function scoreQ(idx) {
   const q = questions[idx];
   const ans = userAns[idx];
-  if (ans.length === 0) return 0;
+
   if (q.type === 'single' || q.type === 'truefalse') {
-    return ans[0] === q.cor[0] ? 1 : 0;
+    return Array.isArray(ans) && ans.length && ans[0] === q.cor[0] ? 1 : 0;
   }
-  // Múltiple: (encerts - errors) / total_correctes, mínim 0
-  const hits = ans.filter(a => q.cor.includes(a)).length;
-  const err  = ans.filter(a => !q.cor.includes(a)).length;
-  return Math.max(0, (hits - err) / q.cor.length);
+  if (q.type === 'multiple') {
+    if (!Array.isArray(ans) || !ans.length) return 0;
+    const hits = ans.filter(a => q.cor.includes(a)).length;
+    const err  = ans.filter(a => !q.cor.includes(a)).length;
+    return Math.max(0, (hits - err) / q.cor.length);
+  }
+  if (q.type === 'fillblank') {
+    const correct = q.blanks.filter((b, n) => ans[n] === b.cor).length;
+    return correct / q.blanks.length;
+  }
+  if (q.type === 'order') {
+    if (!Array.isArray(ans) || !ans.length) return 0;
+    const correct = ans.filter((id, i) => q.cor[i] === id).length;
+    return correct / q.cor.length;
+  }
+  return 0;
 }
 
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 // FINALITZAR
-// ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════
 function finishExam() {
   clearInterval(timerInterval);
 
-  const total = questions.reduce((s, _, i) => s + scoreQ(i), 0);
-  const pct   = Math.round((total / questions.length) * 100);
-  const pass  = total >= questions.length * 0.7;
+  const totalPossible = questions.reduce((s, q) => s + WEIGHT[q.grade], 0);
+  const totalEarned   = questions.reduce((s, q, i) => s + scoreQ(i) * WEIGHT[q.grade], 0);
+  const pct  = Math.round((totalEarned / totalPossible) * 100);
+  const pass = pct >= 70;
 
   document.getElementById('exam-screen').style.display = 'none';
-  const rs = document.getElementById('results-screen');
-  rs.style.display = 'flex';
+  document.getElementById('results-screen').style.display = 'flex';
 
-  document.getElementById('res-score').textContent  = total.toFixed(1) + ' / ' + questions.length;
+  document.getElementById('res-score').textContent  = totalEarned.toFixed(1) + ' / ' + totalPossible.toFixed(1);
   document.getElementById('res-score').className     = 'res-score ' + (pass ? 'pass' : 'fail');
   document.getElementById('res-verdict').textContent = pass ? '✓ PROVA SUPERADA' : '✗ PROVA NO SUPERADA';
   document.getElementById('res-verdict').className   = 'res-verdict ' + (pass ? 'pass' : 'fail');
+  document.getElementById('res-note').textContent    =
+    pct + '% · Cal un mínim del 70% (' + (totalPossible * 0.7).toFixed(1) + ' pts) per superar la prova';
 
-  // Resultats per àrea
   const areaNames = {
     1:"1. Cerca, gestió i anàlisi",
     2:"2. Comunicació i col·laboració",
@@ -1127,18 +1302,18 @@ function finishExam() {
   };
   const ar = document.getElementById('area-results');
   ar.innerHTML = '';
-
   [1,2,3,4,5].forEach(a => {
     const aqs = questions.map((q,i) => ({q,i})).filter(({q}) => q.area === a);
     if (!aqs.length) return;
-    const s = aqs.reduce((acc, {i}) => acc + scoreQ(i), 0);
-    const p = Math.round((s / aqs.length) * 100);
+    const earned   = aqs.reduce((acc,{q,i}) => acc + scoreQ(i) * WEIGHT[q.grade], 0);
+    const possible = aqs.reduce((acc,{q})   => acc + WEIGHT[q.grade], 0);
+    const p = Math.round((earned / possible) * 100);
     const row = document.createElement('div');
     row.className = 'area-row';
-    row.innerHTML = `
-      <span class="area-name">${areaNames[a]}</span>
-      <span class="area-pts">${s.toFixed(1)}/${aqs.length}</span>
-      <div class="area-bar-wrap"><div class="area-bar" style="width:${p}%"></div></div>`;
+    row.innerHTML =
+      '<span class="area-name">' + areaNames[a] + '</span>' +
+      '<span class="area-pts">' + earned.toFixed(1) + '/' + possible.toFixed(1) + '</span>' +
+      '<div class="area-bar-wrap"><div class="area-bar" style="width:' + p + '%"></div></div>';
     ar.appendChild(row);
   });
 }
