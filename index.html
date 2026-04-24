@@ -1325,8 +1325,8 @@ function renderFillblank(q, idx, panel) {
 }
 
 function renderOrder(q, idx, panel) {
-  const order = userAns[idx].length ? userAns[idx] : q.items.map(i => i.id);
-  if (!userAns[idx].length) userAns[idx] = [...order];
+  if (!userAns[idx].length) userAns[idx] = shuffle(q.items.map(i => i.id));
+  const order = userAns[idx];
 
   const list = document.createElement('ul');
   list.className = 'order-list';
