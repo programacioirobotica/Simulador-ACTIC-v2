@@ -140,7 +140,7 @@
     <p><span class="lbl">Temps disponible:</span> <strong>75 minuts</strong></p>
     <p><span class="lbl">Per superar la prova:</span> <strong>70% mínim</strong></p>
     <p><span class="lbl">Tipus de preguntes:</span> <strong>Selecció simple/múltiple, vertader/fals, omplir buits, ordenar accions</strong></p>
-    <p><span class="lbl">Ponderació:</span> <strong>Simple ×0,8 · Mitjà ×1,0 · Complex ×1,2</strong></p>
+    <p><span class="lbl">Ponderació:</span> <strong>2 simples (×0,8) + 4 mitjanes (×1,0) + 2 complexes (×1,2) per àrea = 40 pts</strong></p>
   </div>
   <button class="btn-start" onclick="startExam()">Iniciar la prova</button>
 </div>
@@ -237,7 +237,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:3, area:1, ind:"1.1.3", grade:"simple",
+    id:3, area:1, ind:"1.1.3", grade:"mitja",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"multiple",
     q:"Quins paràmetres bàsics pots tenir en compte quan compares resultats d'una cerca a Internet?",
@@ -265,7 +265,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:5, area:1, ind:"1.1.5", grade:"simple",
+    id:5, area:1, ind:"1.1.5", grade:"mitja",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"multiple",
     q:"Quins criteris simples pots fer servir per delimitar una cerca a Internet als teus objectius?",
@@ -293,7 +293,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:7, area:1, ind:"1.2.2", grade:"simple",
+    id:7, area:1, ind:"1.2.2", grade:"mitja",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"multiple",
     q:"Quines de les següents són ubicacions habituals per emmagatzemar informació digital?",
@@ -335,7 +335,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:10, area:1, ind:"1.3.3", grade:"simple",
+    id:10, area:1, ind:"1.3.3", grade:"mitja",
     areaName:"1. Cerca, gestió i anàlisi de la informació",
     type:"multiple",
     q:"Quines de les següents eines serveixen per representar dades de manera visual?",
@@ -391,7 +391,7 @@ const QUESTIONS = [
     cor:["c"]
   },
   {
-    id:12, area:2, ind:"2.1.2", grade:"simple",
+    id:12, area:2, ind:"2.1.2", grade:"mitja",
     areaName:"2. Comunicació i col·laboració",
     type:"multiple",
     q:"Quines funcionalitats bàsiques pots configurar en una eina de comunicació digital?",
@@ -405,13 +405,13 @@ const QUESTIONS = [
     cor:["a","b","d"]
   },
   {
-    id:13, area:2, ind:"2.1.3", grade:"simple",
+    id:13, area:2, ind:"2.1.3", grade:"mitja",
     areaName:"2. Comunicació i col·laboració",
     type:"truefalse",
-    q:"Quan comparteixo fitxers digitals, he de respectar la normativa de propietat intel·lectual i de protecció de dades personals.",
+    q:"Quan comparteixo fitxers digitals per ús personal, no cal respectar la normativa de propietat intel·lectual.",
     instr:"Selecciona Verdader o Fals",
     opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
-    cor:["true"]
+    cor:["false"]
   },
   {
     id:14, area:2, ind:"2.1.4", grade:"simple",
@@ -428,7 +428,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:15, area:2, ind:"2.1.6", grade:"simple",
+    id:15, area:2, ind:"2.1.6", grade:"mitja",
     areaName:"2. Comunicació i col·laboració",
     type:"truefalse",
     q:"A Internet és important compartir només continguts i informació que hem contrastat i verificat prèviament.",
@@ -451,13 +451,13 @@ const QUESTIONS = [
     cor:["c"]
   },
   {
-    id:17, area:2, ind:"2.2.2", grade:"simple",
+    id:17, area:2, ind:"2.2.2", grade:"mitja",
     areaName:"2. Comunicació i col·laboració",
     type:"truefalse",
-    q:"En un entorn digital de treball col·laboratiu és important seguir les normes d'ús establertes per l'equip.",
+    q:"En un entorn digital col·laboratiu, cada persona pot modificar o eliminar el treball dels altres sense necessitat de comunicar-ho.",
     instr:"Selecciona Verdader o Fals",
     opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
-    cor:["true"]
+    cor:["false"]
   },
   {
     id:18, area:2, ind:"2.3.1", grade:"simple",
@@ -474,7 +474,7 @@ const QUESTIONS = [
     cor:["c"]
   },
   {
-    id:19, area:2, ind:"2.3.4", grade:"simple",
+    id:19, area:2, ind:"2.3.4", grade:"mitja",
     areaName:"2. Comunicació i col·laboració",
     type:"truefalse",
     q:"Cal mostrar una actitud positiva envers la inclusió digital i ser conscients de les problemàtiques socials que generen les tecnologies.",
@@ -511,7 +511,7 @@ const QUESTIONS = [
 
   // ── ÀREA 3: Creació de continguts ────────────────────────────
   {
-    id:21, area:3, ind:"3.1.1", grade:"simple",
+    id:21, area:3, ind:"3.1.1", grade:"mitja",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"multiple",
     q:"Quins dels següents són els tipus principals de continguts digitals?",
@@ -539,7 +539,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:23, area:3, ind:"3.1.3", grade:"simple",
+    id:23, area:3, ind:"3.1.3", grade:"mitja",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"truefalse",
     q:"Puc crear continguts digitals simples com textos, presentacions, imatges o àudios per expressar-me digitalment.",
@@ -548,7 +548,7 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:24, area:3, ind:"3.1.4", grade:"simple",
+    id:24, area:3, ind:"3.1.4", grade:"mitja",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"multiple",
     q:"Quines de les següents són funcionalitats bàsiques d'una aplicació per crear continguts digitals?",
@@ -576,13 +576,13 @@ const QUESTIONS = [
     cor:["a"]
   },
   {
-    id:26, area:3, ind:"3.2.1", grade:"simple",
+    id:26, area:3, ind:"3.2.1", grade:"mitja",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"truefalse",
-    q:"Puc crear dissenys gràfics bàsics combinant continguts digitals de tipus diferent (text, imatge, color...) per expressar-me de manera visual.",
+    q:"Per crear qualsevol disseny gràfic digital cal tenir coneixements avançats de programació informàtica.",
     instr:"Selecciona Verdader o Fals",
     opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
-    cor:["true"]
+    cor:["false"]
   },
   {
     id:27, area:3, ind:"3.2.2", grade:"simple",
@@ -599,7 +599,7 @@ const QUESTIONS = [
     cor:["a"]
   },
   {
-    id:28, area:3, ind:"3.4.1", grade:"simple",
+    id:28, area:3, ind:"3.4.1", grade:"mitja",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"multiple",
     q:"Quins dels següents exemples corresponen a llenguatges o entorns de programació?",
@@ -613,7 +613,7 @@ const QUESTIONS = [
     cor:["a","b","c"]
   },
   {
-    id:29, area:3, ind:"3.4.2", grade:"simple",
+    id:29, area:3, ind:"3.4.2", grade:"mitja",
     areaName:"3. Creació de continguts, programació i fabricació d'objectes",
     type:"truefalse",
     q:"El pensament computacional es basa en el raonament lògic per identificar i resoldre problemes de manera sistemàtica.",
@@ -664,7 +664,7 @@ const QUESTIONS = [
 
   // ── ÀREA 4: Seguretat, benestar i civisme ────────────────────
   {
-    id:31, area:4, ind:"4.1.1", grade:"simple",
+    id:31, area:4, ind:"4.1.1", grade:"mitja",
     areaName:"4. Seguretat, benestar i civisme",
     type:"multiple",
     q:"Quins dels següents són riscos associats a l'ús de dispositius tecnològics?",
@@ -678,7 +678,7 @@ const QUESTIONS = [
     cor:["a","b","c"]
   },
   {
-    id:32, area:4, ind:"4.1.2", grade:"simple",
+    id:32, area:4, ind:"4.1.2", grade:"mitja",
     areaName:"4. Seguretat, benestar i civisme",
     type:"multiple",
     q:"Quines mesures bàsiques de protecció pots aplicar als teus dispositius digitals?",
@@ -706,7 +706,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:34, area:4, ind:"4.1.4", grade:"simple",
+    id:34, area:4, ind:"4.1.4", grade:"mitja",
     areaName:"4. Seguretat, benestar i civisme",
     type:"truefalse",
     q:"És recomanable fer còpies de seguretat dels dispositius i continguts digitals de manera periòdica.",
@@ -715,13 +715,13 @@ const QUESTIONS = [
     cor:["true"]
   },
   {
-    id:35, area:4, ind:"4.2.1", grade:"simple",
+    id:35, area:4, ind:"4.2.1", grade:"mitja",
     areaName:"4. Seguretat, benestar i civisme",
     type:"truefalse",
-    q:"Quan ens registrem en serveis en línia, hem de valorar quines dades personals proporcionem i si és convenient fer-ho.",
+    q:"Les condicions d'ús dels serveis en línia no tenen cap efecte legal sobre com el servei pot utilitzar les nostres dades.",
     instr:"Selecciona Verdader o Fals",
     opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
-    cor:["true"]
+    cor:["false"]
   },
   {
     id:36, area:4, ind:"4.2.2", grade:"simple",
@@ -738,16 +738,16 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:37, area:4, ind:"4.3.2", grade:"simple",
+    id:37, area:4, ind:"4.3.2", grade:"mitja",
     areaName:"4. Seguretat, benestar i civisme",
     type:"truefalse",
-    q:"L'ús excessiu de la tecnologia digital pot generar riscos per a la salut, com ara conductes addictives o esgotament digital.",
+    q:"L'ús de la tecnologia digital, sigui quin sigui el temps dedicat, no té cap efecte negatiu sobre la salut de les persones.",
     instr:"Selecciona Verdader o Fals",
     opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
-    cor:["true"]
+    cor:["false"]
   },
   {
-    id:38, area:4, ind:"4.5.2", grade:"simple",
+    id:38, area:4, ind:"4.5.2", grade:"mitja",
     areaName:"4. Seguretat, benestar i civisme",
     type:"multiple",
     q:"Quines de les següents afirmacions sobre la propietat intel·lectual en entorns digitals són correctes?",
@@ -789,7 +789,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:40, area:5, ind:"5.1.2", grade:"simple",
+    id:40, area:5, ind:"5.1.2", grade:"mitja",
     areaName:"5. Autonomia i resolució de problemes",
     type:"multiple",
     q:"Quins dels següents dispositius es consideren dispositius digitals d'ús comú?",
@@ -817,7 +817,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:42, area:5, ind:"5.1.5", grade:"simple",
+    id:42, area:5, ind:"5.1.5", grade:"mitja",
     areaName:"5. Autonomia i resolució de problemes",
     type:"multiple",
     q:"Quins dels següents són tipus de connectivitat habituals entre dispositius tecnològics?",
@@ -845,13 +845,13 @@ const QUESTIONS = [
     cor:["a"]
   },
   {
-    id:44, area:5, ind:"5.2.5", grade:"simple",
+    id:44, area:5, ind:"5.2.5", grade:"mitja",
     areaName:"5. Autonomia i resolució de problemes",
     type:"truefalse",
-    q:"Internet i les plataformes digitals ofereixen oportunitats per aprendre i seguir comunitats relacionades amb els nostres interessos personals i professionals.",
+    q:"Internet és útil exclusivament per a la comunicació personal i el lleure, però no per a l'aprenentatge o el desenvolupament professional.",
     instr:"Selecciona Verdader o Fals",
     opts:[{id:"true",t:"Verdader"},{id:"false",t:"Fals"}],
-    cor:["true"]
+    cor:["false"]
   },
   {
     id:45, area:5, ind:"5.4.1", grade:"simple",
@@ -868,7 +868,7 @@ const QUESTIONS = [
     cor:["b"]
   },
   {
-    id:46, area:5, ind:"5.4.2", grade:"simple",
+    id:46, area:5, ind:"5.4.2", grade:"mitja",
     areaName:"5. Autonomia i resolució de problemes",
     type:"truefalse",
     q:"Puc buscar informació i suport a Internet (PMF/FAQ, fòrums, tutorials...) per intentar resoldre problemes tècnics habituals.",
@@ -901,11 +901,205 @@ const QUESTIONS = [
       {id:"d", t:"Si el problema continua, buscar ajuda o informació a Internet (FAQ, tutorials)"}
     ],
     cor:["a","b","c","d"]
+  },
+
+  // ── NOVES PREGUNTES COMPLEXES – Àrea 1 ──────────────────────
+  {
+    id:55, area:1, ind:"1.1.2", grade:"complex",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"order",
+    q:"Ordena els passos per avaluar si una font d'informació a Internet és fiable",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Localitzar el lloc web i llegir el títol i la descripció general"},
+      {id:"b", t:"Identificar l'autoria: qui ha creat el contingut i quines credencials té"},
+      {id:"c", t:"Comprovar la data de publicació i si el contingut és actual"},
+      {id:"d", t:"Contrastar la informació amb altres fonts independents i fiables"}
+    ],
+    cor:["a","b","c","d"]
+  },
+  {
+    id:56, area:1, ind:"1.2.1", grade:"complex",
+    areaName:"1. Cerca, gestió i anàlisi de la informació",
+    type:"order",
+    q:"Ordena els passos per organitzar correctament fitxers en carpetes de l'ordinador",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Decidir quines categories o temes principals necessites"},
+      {id:"b", t:"Crear carpetes amb noms clars i descriptius"},
+      {id:"c", t:"Moure els fitxers existents a la carpeta corresponent"},
+      {id:"d", t:"Eliminar els fitxers duplicats o que ja no necessites"}
+    ],
+    cor:["a","b","c","d"]
+  },
+
+  // ── NOVES PREGUNTES COMPLEXES – Àrea 2 ──────────────────────
+  {
+    id:57, area:2, ind:"2.1.2", grade:"complex",
+    areaName:"2. Comunicació i col·laboració",
+    type:"order",
+    q:"Ordena els passos per enviar un correu electrònic formal",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Obrir el client de correu i fer clic a 'Redacta' o 'Nou missatge'"},
+      {id:"b", t:"Escriure l'adreça del destinatari i un assumpte clar"},
+      {id:"c", t:"Redactar el missatge de manera clara i respectuosa"},
+      {id:"d", t:"Revisar el text, adjuntar fitxers si cal, i fer clic a 'Envia'"}
+    ],
+    cor:["a","b","c","d"]
+  },
+  {
+    id:58, area:2, ind:"2.2.1", grade:"complex",
+    areaName:"2. Comunicació i col·laboració",
+    type:"order",
+    q:"Ordena els passos per unir-se a una videoconferència en línia",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Rebre o cercar l'enllaç o codi de la reunió"},
+      {id:"b", t:"Obrir l'aplicació de videoconferència (Zoom, Meet, Teams...)"},
+      {id:"c", t:"Comprovar que el micròfon i la càmera funcionen correctament"},
+      {id:"d", t:"Unir-se a la reunió i saludar els participants"}
+    ],
+    cor:["a","b","c","d"]
+  },
+  {
+    id:59, area:2, ind:"2.2.2", grade:"complex",
+    areaName:"2. Comunicació i col·laboració",
+    type:"order",
+    q:"Ordena els passos per compartir un document en línia de manera col·laborativa",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Pujar el document a un servei al núvol (Google Drive, OneDrive...)"},
+      {id:"b", t:"Seleccionar el document i obrir les opcions de compartir"},
+      {id:"c", t:"Afegir les adreces de correu de les persones amb qui vols compartir"},
+      {id:"d", t:"Assignar els permisos adequats (lectura o edició) i confirmar"}
+    ],
+    cor:["a","b","c","d"]
+  },
+
+  // ── NOVES PREGUNTES COMPLEXES – Àrea 3 ──────────────────────
+  {
+    id:60, area:3, ind:"3.1.2", grade:"complex",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"order",
+    q:"Ordena els passos per crear un document de text bàsic",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Obrir el processador de textos (Word, Writer...)"},
+      {id:"b", t:"Escriure el títol i el contingut del document"},
+      {id:"c", t:"Donar format al text (negreta, llistes, encapçalaments...)"},
+      {id:"d", t:"Desar el document amb un nom i en la carpeta adequada"}
+    ],
+    cor:["a","b","c","d"]
+  },
+  {
+    id:61, area:3, ind:"3.2.1", grade:"complex",
+    areaName:"3. Creació de continguts, programació i fabricació d'objectes",
+    type:"order",
+    q:"Ordena els passos per afegir una imatge a una presentació digital",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Obrir el programa de presentacions i la diapositiva on vols afegir la imatge"},
+      {id:"b", t:"Cercar o triar la imatge que vols inserir (repositori o fitxers locals)"},
+      {id:"c", t:"Inserir la imatge fent servir el menú 'Insereix' > 'Imatge'"},
+      {id:"d", t:"Ajustar la mida i la posició de la imatge dins la diapositiva"}
+    ],
+    cor:["a","b","c","d"]
+  },
+
+  // ── NOVES PREGUNTES COMPLEXES – Àrea 4 ──────────────────────
+  {
+    id:62, area:4, ind:"4.1.2", grade:"complex",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"order",
+    q:"Ordena els passos per configurar una contrasenya segura en un compte en línia",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Accedir a la configuració del compte i a l'opció 'Canvia la contrasenya'"},
+      {id:"b", t:"Crear una contrasenya llarga que combini lletres, números i símbols"},
+      {id:"c", t:"Escriure la contrasenya nova dues vegades per confirmar-la"},
+      {id:"d", t:"Desar els canvis i guardar la contrasenya en un lloc segur"}
+    ],
+    cor:["a","b","c","d"]
+  },
+  {
+    id:63, area:4, ind:"4.1.4", grade:"complex",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"order",
+    q:"Ordena els passos per fer una còpia de seguretat dels fitxers importants",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Seleccionar els fitxers i carpetes que vols copiar"},
+      {id:"b", t:"Triar el dispositiu de còpia (disc dur extern, USB o servei al núvol)"},
+      {id:"c", t:"Copiar o sincronitzar els fitxers en el dispositiu triat"},
+      {id:"d", t:"Verificar que la còpia s'ha fet correctament i guardar el dispositiu en un lloc segur"}
+    ],
+    cor:["a","b","c","d"]
+  },
+  {
+    id:64, area:4, ind:"4.2.2", grade:"complex",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"order",
+    q:"Ordena els passos per revisar i ajustar la privadesa d'un perfil a una xarxa social",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Accedir a la configuració del perfil a la xarxa social"},
+      {id:"b", t:"Localitzar l'apartat de privadesa o privacitat"},
+      {id:"c", t:"Revisar qui pot veure les publicacions, fotos i informació personal"},
+      {id:"d", t:"Aplicar els canvis i tancar la configuració"}
+    ],
+    cor:["a","b","c","d"]
+  },
+
+  // ── NOVA PREGUNTA SIMPLE – Àrea 4 (per tenir mínim 3 simples) ─
+  {
+    id:67, area:4, ind:"4.1.1", grade:"simple",
+    areaName:"4. Seguretat, benestar i civisme",
+    type:"single",
+    q:"Quina de les següents accions NO és una bona pràctica de seguretat digital?",
+    instr:"Selecciona la resposta correcta",
+    opts:[
+      {id:"a", t:"Fer servir contrasenyes llargues i úniques per a cada compte"},
+      {id:"b", t:"Connectar-se a xarxes Wi-Fi públiques obertes per accedir a la banca en línia"},
+      {id:"c", t:"Activar l'autenticació en dos passos sempre que sigui possible"},
+      {id:"d", t:"Actualitzar regularment les aplicacions i el sistema operatiu"}
+    ],
+    cor:["b"]
+  },
+
+  // ── NOVES PREGUNTES COMPLEXES – Àrea 5 ──────────────────────
+  {
+    id:65, area:5, ind:"5.1.5", grade:"complex",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"order",
+    q:"Ordena els passos per connectar un dispositiu a una xarxa Wi-Fi per primera vegada",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Obrir la configuració de xarxa del dispositiu i buscar xarxes disponibles"},
+      {id:"b", t:"Seleccionar la xarxa Wi-Fi a la qual et vols connectar"},
+      {id:"c", t:"Introduir la contrasenya de la xarxa Wi-Fi"},
+      {id:"d", t:"Confirmar la connexió i comprovar que tens accés a Internet"}
+    ],
+    cor:["a","b","c","d"]
+  },
+  {
+    id:66, area:5, ind:"5.2.2", grade:"complex",
+    areaName:"5. Autonomia i resolució de problemes",
+    type:"order",
+    q:"Ordena els passos per actualitzar el sistema operatiu d'un dispositiu",
+    instr:"Arrossega els elements per posar-los en l'ordre correcte",
+    items:[
+      {id:"a", t:"Accedir a la configuració del dispositiu i a l'apartat d'actualitzacions"},
+      {id:"b", t:"Cercar actualitzacions disponibles i llegir el que inclouen"},
+      {id:"c", t:"Descarregar i instal·lar les actualitzacions"},
+      {id:"d", t:"Reiniciar el dispositiu si és necessari per aplicar els canvis"}
+    ],
+    cor:["a","b","c","d"]
   }
 ];
 
 // ═══════════════════════════════════════════════════
-// SELECCIÓ DE PREGUNTES (8 per àrea, aleatori)
+// SELECCIÓ DE PREGUNTES (2 simple + 4 mitja + 2 complex per àrea = 40 pts)
 // ═══════════════════════════════════════════════════
 function shuffle(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
@@ -918,8 +1112,11 @@ function shuffle(arr) {
 function selectQuestions() {
   let selected = [];
   [1,2,3,4,5].forEach(a => {
-    const pool = shuffle(QUESTIONS.filter(q => q.area === a));
-    selected = selected.concat(pool.slice(0, 8));
+    const pool = QUESTIONS.filter(q => q.area === a);
+    const simples   = shuffle(pool.filter(q => q.grade === 'simple')).slice(0, 2);
+    const mitjes    = shuffle(pool.filter(q => q.grade === 'mitja')).slice(0, 4);
+    const complexes = shuffle(pool.filter(q => q.grade === 'complex')).slice(0, 2);
+    selected = selected.concat(simples, mitjes, complexes);
   });
   return shuffle(selected);
 }
