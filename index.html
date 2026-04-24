@@ -73,9 +73,15 @@
     .order-item.bad { border-color: #cc3333; background: #fbeaea; cursor: default; }
     .order-item.disabled { cursor: default; }
     .drag-handle { color: #bbb; margin-right: 10px; font-size: 1rem; flex-shrink: 0; line-height: 1; }
-    .order-pos { width: 26px; height: 26px; border-radius: 50%; background: #e8a020; color: white; font-size: 0.75rem; font-weight: bold; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0; }
+    .order-pos { width: 24px; height: 24px; border-radius: 50%; background: #888; color: white; font-size: 0.72rem; font-weight: bold; display: flex; align-items: center; justify-content: center; margin-right: 8px; flex-shrink: 0; }
     .order-item.ok  .order-pos { background: #2a8a2a; }
     .order-item.bad .order-pos { background: #cc3333; }
+    .item-tag { width: 26px; height: 26px; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: white; font-size: 0.72rem; font-weight: bold; margin-right: 12px; flex-shrink: 0; }
+    .item-tag[data-tag="A"] { background: #2a6ab0; }
+    .item-tag[data-tag="B"] { background: #b04a2a; }
+    .item-tag[data-tag="C"] { background: #2a8a4a; }
+    .item-tag[data-tag="D"] { background: #7a3ab0; }
+    .order-item.dragging .item-tag { opacity: .6; }
 
     /* FEEDBACK */
     .feedback-bar { margin-top: 14px; padding: 10px 14px; border-radius: 3px; font-size: 0.88rem; display: none; }
@@ -1152,6 +1158,18 @@ function startExam() {
   userAns = questions.map(q => q.type === 'fillblank' ? {} : []);
   validated = questions.map(() => false);
   timerSecs = 75 * 60;
+
+  questions.forEach(q => {
+    if (q.type === 'single' || q.type === 'multiple') {
+      q.opts = shuffle([...q.opts]);
+    }
+    if (q.type === 'order') {
+      const tags = shuffle(['A','B','C','D'].slice(0, q.items.length));
+      q._tags = {};
+      q.items.forEach((item, i) => { q._tags[item.id] = tags[i]; });
+    }
+  });
+
   document.getElementById('intro-screen').style.display = 'none';
   document.getElementById('exam-screen').style.display = 'flex';
   renderQ(0);
@@ -1347,12 +1365,19 @@ function renderOrder(q, idx, panel) {
     pos_el.className = 'order-pos';
     pos_el.textContent = pos + 1;
 
+    const tag = q._tags ? q._tags[id] : '';
+    const tagEl = document.createElement('span');
+    tagEl.className = 'item-tag';
+    tagEl.dataset.tag = tag;
+    tagEl.textContent = tag;
+
     const txt = document.createElement('span');
     txt.className = 'opt-text';
     txt.textContent = item.t;
 
     li.appendChild(handle);
     li.appendChild(pos_el);
+    li.appendChild(tagEl);
     li.appendChild(txt);
     list.appendChild(li);
   });
